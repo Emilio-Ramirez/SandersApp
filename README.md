@@ -164,7 +164,7 @@ erDiagram
 
 ## Logs
 
-El sistema utiliza Grafana para el monitoreo y visualización de logs. Esto permite un seguimiento eficiente del rendimiento de la aplicación, la actividad de los usuarios y facilita la detección temprana de problemas.
+- El sistema utiliza Grafana para el monitoreo y visualización de logs. Esto permite un seguimiento eficiente del rendimiento de la aplicación, la actividad de los usuarios y facilita la detección temprana de problemas.
 
 ## Testing
 
