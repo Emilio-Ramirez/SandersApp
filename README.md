@@ -24,6 +24,11 @@ erDiagram
     Proyecto ||--o{ Donacion : recibe
     Proyecto ||--o{ DonacionFisica : recibe
     Proyecto ||--o{ Estadistica : genera
+    User ||--o{ Log : genera
+    Proyecto ||--o{ Log : genera
+    Donacion ||--o{ Log : genera
+    DonacionFisica ||--o{ Log : genera
+    Suscripcion ||--o{ Log : genera
 
     User {
         int id PK
@@ -79,6 +84,17 @@ erDiagram
         int personas_ayudadas
         decimal agua_proporcionada
         date fecha
+    }
+    Log {
+        int id PK
+        string tipo
+        string descripcion
+        datetime fecha
+        int usuario FK
+        int proyecto FK
+        int donacion FK
+        int donacion_fisica FK
+        int suscripcion FK
     }
 ```
 

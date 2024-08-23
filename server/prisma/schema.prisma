@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  donaciones   Donacion[]
+  suscripciones Suscripcion[]
+  logs         Log[]
+}
+
+model Proveedor {
+  id                   Int        @id @default(autoincrement())
+  nombre               String
+  contacto             String
+  telefono             String
+  email                String
+  producto_especifico  String
+  proyectos            Proyecto[]
+}
+
+model Proyecto {
+  id                  Int               @id @default(autoincrement())
+  nombre              String
+  descripcion         String
+  proveedor           Proveedor         @relation(fields: [proveedorId], references: [id])
+  proveedorId         Int
+  costo_total         Decimal
+  fecha_inicio        DateTime
+  fecha_fin           DateTime
+  link_ubicacion      String
+  estado_trazabilidad Json
+  donaciones          Donacion[]
+  donacionesFisicas   DonacionFisica[]
+  estadisticas        Estadistica[]
+  logs                Log[]
+}
+
+model Donacion {
+  id         Int      @id @default(autoincrement())
+  usuario    User     @relation(fields: [usuarioId], references: [id])
+  usuarioId  Int
+  proyecto   Proyecto @relation(fields: [proyectoId], references: [id])
+  proyectoId Int
+  cantidad   Decimal
+  fecha      DateTime
+  stripe_id  String?
+  es_mensual Boolean
+  logs       Log[]
+}
+
+model DonacionFisica {
+  id          Int      @id @default(autoincrement())
+  proyecto    Proyecto @relation(fields: [proyectoId], references: [id])
+  proyectoId  Int
+  cantidad    Decimal
+  fecha       DateTime
+  descripcion String
+  logs        Log[]
+}
+
+model Suscripcion {
+  id                     Int      @id @default(autoincrement())
+  usuario                User     @relation(fields: [usuarioId], references: [id])
+  usuarioId              Int
+  stripe_subscription_id String
+  estado                 String
+  fecha_inicio           DateTime
+  fecha_fin              DateTime
+  logs                   Log[]
+}
+
+model Estadistica {
+  id                 Int      @id @default(autoincrement())
+  proyecto           Proyecto @relation(fields: [proyectoId], references: [id])
+  proyectoId         Int
+  personas_ayudadas  Int
+  agua_proporcionada Decimal
+  fecha              DateTime
+}
+
+model Log {
+  id                Int             @id @default(autoincrement())
+  tipo              String
+  descripcion       String
+  fecha             DateTime        @default(now())
+  usuario           User?           @relation(fields: [usuarioId], references: [id])
+  usuarioId         Int?
+  proyecto          Proyecto?       @relation(fields: [proyectoId], references: [id])
+  proyectoId        Int?
+  donacion          Donacion?       @relation(fields: [donacionId], references: [id])
+  donacionId        Int?
+  donacionFisica    DonacionFisica? @relation(fields: [donacionFisicaId], references: [id])
+  donacionFisicaId  Int?
+  suscripcion       Suscripcion?    @relation(fields: [suscripcionId], references: [id])
+  suscripcionId     Int?
+}
