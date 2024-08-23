@@ -16,7 +16,6 @@ model User {
   email        String        @unique
   donaciones   Donacion[]
   suscripciones Suscripcion[]
-  logs         Log[]
 }
 
 model Proveedor {
@@ -43,30 +42,27 @@ model Proyecto {
   donaciones          Donacion[]
   donacionesFisicas   DonacionFisica[]
   estadisticas        Estadistica[]
-  logs                Log[]
 }
 
 model Donacion {
   id         Int      @id @default(autoincrement())
   usuario    User     @relation(fields: [usuarioId], references: [id])
   usuarioId  Int
-  proyecto   Proyecto @relation(fields: [proyectoId], references: [id])
-  proyectoId Int
+  proyecto   Proyecto? @relation(fields: [proyectoId], references: [id])
+  proyectoId Int?
   cantidad   Decimal
   fecha      DateTime
   stripe_id  String?
   es_mensual Boolean
-  logs       Log[]
 }
 
 model DonacionFisica {
   id          Int      @id @default(autoincrement())
-  proyecto    Proyecto @relation(fields: [proyectoId], references: [id])
-  proyectoId  Int
+  proyecto    Proyecto? @relation(fields: [proyectoId], references: [id])
+  proyectoId  Int?
   cantidad    Decimal
   fecha       DateTime
   descripcion String
-  logs        Log[]
 }
 
 model Suscripcion {
@@ -77,7 +73,6 @@ model Suscripcion {
   estado                 String
   fecha_inicio           DateTime
   fecha_fin              DateTime
-  logs                   Log[]
 }
 
 model Estadistica {
@@ -87,21 +82,4 @@ model Estadistica {
   personas_ayudadas  Int
   agua_proporcionada Decimal
   fecha              DateTime
-}
-
-model Log {
-  id                Int             @id @default(autoincrement())
-  tipo              String
-  descripcion       String
-  fecha             DateTime        @default(now())
-  usuario           User?           @relation(fields: [usuarioId], references: [id])
-  usuarioId         Int?
-  proyecto          Proyecto?       @relation(fields: [proyectoId], references: [id])
-  proyectoId        Int?
-  donacion          Donacion?       @relation(fields: [donacionId], references: [id])
-  donacionId        Int?
-  donacionFisica    DonacionFisica? @relation(fields: [donacionFisicaId], references: [id])
-  donacionFisicaId  Int?
-  suscripcion       Suscripcion?    @relation(fields: [suscripcionId], references: [id])
-  suscripcionId     Int?
 }

@@ -81,15 +81,85 @@ For future schema changes:
 
 Note: This method bypasses Prisma's migration system. Be extra careful when making changes to your production database, and always backup your data before making schema changes.
 
-## API Endpoints
 
-[List and briefly describe your main API endpoints here]
+## API Endpoints and Authentication
 
-## Authentication
+### API Structure
+- Controllers: `/src/controllers`
+- Routes: `/src/routes`
+- Middleware: `/src/middleware`
 
-- JWT for user sessions
-- Google OAuth integration for donor login
-- Authentication middleware to protect routes
+### Main API Endpoints
+
+1. Authentication
+   - POST `/api/auth/login`: User login
+   - POST `/api/auth/register`: User registration
+   - POST `/api/auth/google`: Google OAuth login
+
+2. Users
+   - GET `/api/users`: Get all users (admin only)
+   - GET `/api/users/:id`: Get user by ID
+   - PUT `/api/users/:id`: Update user
+   - DELETE `/api/users/:id`: Delete user (admin only)
+
+3. Projects
+   - GET `/api/projects`: Get all projects
+   - GET `/api/projects/:id`: Get project by ID
+   - POST `/api/projects`: Create new project (admin only)
+   - PUT `/api/projects/:id`: Update project (admin only)
+   - DELETE `/api/projects/:id`: Delete project (admin only)
+
+4. Donations
+   - GET `/api/donations`: Get all donations
+   - GET `/api/donations/:id`: Get donation by ID
+   - POST `/api/donations`: Create new donation
+   - GET `/api/donations/user/:userId`: Get donations by user ID
+
+5. Providers
+   - GET `/api/providers`: Get all providers
+   - GET `/api/providers/:id`: Get provider by ID
+   - POST `/api/providers`: Create new provider (admin only)
+   - PUT `/api/providers/:id`: Update provider (admin only)
+   - DELETE `/api/providers/:id`: Delete provider (admin only)
+
+### Authentication
+
+- JWT is used for user sessions
+- Google OAuth is integrated for donor login
+- Authentication middleware protects routes
+
+### Adding Authentication to APIs
+
+1. The `authMiddleware` is applied globally to all routes except login and registration:
+
+   ```javascript
+   app.use(authMiddleware(['/api/auth/login', '/api/auth/register', '/api/auth/google']));
+   ```
+
+2. This means all other routes are automatically protected and require a valid JWT token.
+
+3. To access protected routes, include the JWT token in the Authorization header:
+
+   ```
+   Authorization: Bearer <your_jwt_token>
+   ```
+
+4. For routes that require specific roles (e.g., admin-only routes), use the `roleMiddleware`:
+
+   ```javascript
+   const roleMiddleware = require('../middleware/roleMiddleware');
+
+   router.post('/projects', roleMiddleware(['admin']), projectController.createProject);
+   ```
+
+5. To get the authenticated user in a controller:
+
+   ```javascript
+   const user = req.user; // Added by authMiddleware
+   ```
+
+Remember to handle authentication errors appropriately in your error handling middleware.
+
 
 ## Security
 
