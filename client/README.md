@@ -1,46 +1,107 @@
-## Minimal [(Free version)](https://minimal-kit-react.vercel.app/)
+# Sanders App Client
 
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
+This is the client-side application for Sanders App, built with React and Material-UI.
 
-> Free React Admin Dashboard made with Material-UI components and React.
+## Getting Started
 
-![preview](public/assets/preview.jpg)
+### Prerequisites
 
-## Demo
+- Node.js (v14 or later recommended)
+- Yarn package manager
 
-- [Dashboard Page](https://minimal-kit-react.vercel.app/)
-- [Users Page](https://minimal-kit-react.vercel.app/user)
-- [Products Page](https://minimal-kit-react.vercel.app/products)
-- [Blog Page](https://minimal-kit-react.vercel.app/blog)
-- [Login Page](https://minimal-kit-react.vercel.app/login)
-- [Not Found Page](https://minimal-kit-react.vercel.app/404)
+### Installation
 
-## Quick start
+1. Clone the repository:
 
-- [Download from Github](https://github.com/minimal-ui-kit/material-kit-react/archive/refs/heads/main.zip) or clone the repo : `git clone https://github.com/minimal-ui-kit/material-kit-react.git`
-- Recommended `Node.js v18.x`.
-- **Install:** `yarn install`
-- **Start:** `yarn dev`
-- **Build:** `yarn build`
+```
 
-## Upgrade to PRO Version
+git clone [repository-url]
+cd [repository-name]/client
 
-| Minimal Free     | [Minimal Pro](https://material-ui.com/store/items/minimal-dashboard/) |
-| :--------------- | :-------------------------------------------------------------------- |
-| **6** Demo Pages | **70+** Demo Pages                                                    |
-| -                | Authentication with **Amplify**, **Auth0**, **JWT** and **Firebase**  |
-| -                | [+More components](https://minimals.cc/components)                    |
-| -                | Dark & light mode                                                     |
-| -                | Next.js version                                                       |
-| -                | TypeScript version (Standard Plus and Extended license)               |
-| -                | Design Figma File (Standard Plus and Extended license)                |
-| -                | Complete Users Flows                                                  |
-| -                | Learn more: [Package & License](https://docs.minimals.cc/package)     |
+```
+
+2. Install dependencies:
+
+```
+
+yarn install
+
+```
+
+### Development
+
+To start the development server:
+
+```
+
+yarn dev
+
+```
+
+This will start the Vite development server. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+To start the development server and make it accessible from other devices on the same network:
+
+```
+
+yarn dev:host
+
+```
+
+### Building for Production
+
+To create a production build:
+
+```
+
+yarn build
+
+```
+
+The built files will be in the `dist` directory.
+
+### Other Scripts
+
+- `yarn start`: Preview the production build
+- `yarn lint`: Run ESLint
+- `yarn lint:fix`: Run ESLint and automatically fix issues
+- `yarn prettier`: Format code with Prettier
+- `yarn rm:all`: Remove all generated directories and dependencies
+- `yarn re:start`: Remove all, reinstall dependencies, and start dev server
+- `yarn re:build`: Remove all, reinstall dependencies, and create a production build
+
+## Project Structure
+
+```
+
+client/
+├── public/
+│ └── assets/
+├── src/
+│ ├── components/
+│ ├── hooks/
+│ ├── layouts/
+│ ├── pages/
+│ ├── routes/
+│ ├── sections/
+│ ├── theme/
+│ ├── utils/
+│ ├── app.jsx
+│ └── main.jsx
+└── ...configuration files
+
+```
+
+## Technologies Used
+
+- React
+- Material-UI
+- Vite
+- React Router
+- Apexcharts
+- Emotion
+- and more (see package.json for full list)
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/minimal-ui-kit/minimal.free/blob/main/LICENSE.md) for more information.
-
-## Contact us
-
-Email: support@minimals.cc
+This project is licensed under the MIT License.
