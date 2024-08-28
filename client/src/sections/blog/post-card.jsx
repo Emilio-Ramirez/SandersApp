@@ -16,9 +16,9 @@ import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
-
+// deleted auth form the first const because the slint warning of not use
 export default function PostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
+  const { cover, title, view, comment, share, createdAt } = post;
 
   const latestPostLarge = index === 0;
 
@@ -28,7 +28,7 @@ export default function PostCard({ post, index }) {
     <Avatar
       sx={{
         ...((latestPostLarge || latestPost) && {
-        
+
         }),
       }}
     />
