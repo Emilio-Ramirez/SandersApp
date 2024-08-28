@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev:server": "nodemon --exec \"npm run lint && node\" server.js",
+    "dev": "npm run dev:server",
+    "lint": "eslint . --format codeframe",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -23,6 +25,11 @@
     "mongoose": "^8.5.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.1",
+    "eslint-formatter-codeframe": "^7.32.1",
     "nodemon": "^3.1.4",
     "prisma": "^5.19.0"
   }
