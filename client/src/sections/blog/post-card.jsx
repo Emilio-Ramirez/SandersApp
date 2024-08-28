@@ -76,7 +76,7 @@ export default function PostCard({ post, index }) {
           direction="row"
           sx={{
             ...((latestPostLarge || latestPost) && {
-              opacity: 0.48,
+              
               color: 'common.white',
             }),
           }}
