@@ -26,21 +26,9 @@ export default function PostCard({ post, index }) {
 
   const renderAvatar = (
     <Avatar
-      alt={author.name}
-      src={author.avatarUrl}
       sx={{
-        zIndex: 9,
-        width: 32,
-        height: 32,
-        position: 'absolute',
-        left: (theme) => theme.spacing(3),
-        bottom: (theme) => theme.spacing(-2),
         ...((latestPostLarge || latestPost) && {
-          zIndex: 9,
-          top: 24,
-          left: 24,
-          width: 40,
-          height: 40,
+        
         }),
       }}
     />
