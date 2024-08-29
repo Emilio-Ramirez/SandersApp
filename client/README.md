@@ -40,26 +40,6 @@ yarn dev
 
 This will start the Vite development server. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-To start the development server and make it accessible from other devices on the same network:
-
-```
-
-yarn dev:host
-
-```
-
-### Building for Production
-
-To create a production build:
-
-```
-
-yarn build
-
-```
-
-The built files will be in the `dist` directory.
-
 ### Other Scripts
 
 - `yarn start`: Preview the production build
@@ -70,24 +50,45 @@ The built files will be in the `dist` directory.
 - `yarn re:start`: Remove all, reinstall dependencies, and start dev server
 - `yarn re:build`: Remove all, reinstall dependencies, and create a production build
 
+# Authentication
+
+The app uses JWT for authentication. The `AuthContext` provides the following functionality:
+
+- `login`: Log in a user and store the JWT token
+- `logout`: Log out the user and remove the token
+- `loginAndRedirect`: Log in and redirect to a specified route
+- `user`: Current user information
+- `loading`: Indicates if the auth state is being loaded
+
+## Protected Routes
+
+Protected routes are implemented using the `ProtectedRoute` component. It ensures that only authenticated users can access certain parts of the application.
+
+## API Integration
+
+The `api.js` utility is used for making authenticated API requests. It automatically includes the JWT token in the request headers.
+
 ## Project Structure
 
 ```
 
 client/
 ├── public/
-│ └── assets/
+│   └── assets/
 ├── src/
-│ ├── components/
-│ ├── hooks/
-│ ├── layouts/
-│ ├── pages/
-│ ├── routes/
-│ ├── sections/
-│ ├── theme/
-│ ├── utils/
-│ ├── app.jsx
-│ └── main.jsx
+│   ├── components/
+│   │   └── ProtectedRoute.jsx
+│   ├── contexts/
+│   │   └── AuthContext.jsx
+│   ├── hooks/
+│   ├── layouts/
+│   ├── pages/
+│   ├── routes/
+│   │   └── sections.jsx
+│   ├── utils/
+│   │   └── api.js
+│   ├── app.jsx
+│   └── main.jsx
 └── ...configuration files
 
 ```

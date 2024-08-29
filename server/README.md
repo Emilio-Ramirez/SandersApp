@@ -1,186 +1,102 @@
-# Sistema de Donaciones - Server
+# Sanders App Server
 
-## Description
-
-This is the backend server for the Sistema de Donaciones project. It manages projects, providers, and both physical and online donations. The server is designed to support both administrator and donor interfaces.
-
-## Technologies Used
-
-- Node.js with Express
-- PostgreSQL with Prisma ORM
-- JWT and Google OAuth for authentication
-- Stripe for payment processing
-- Grafana for logging and monitoring
+This is the backend server for the Sanders App project.
 
 ## Getting Started
 
-1. Clone the repository
-2. Navigate to the server directory:
+### Prerequisites
 
-   ```sh
-   cd server
+- Node.js (v14 or later recommended)
+- npm or Yarn package manager
+- PostgreSQL database
+
+### Installation
+
+1. Clone the repository:
+
+   ```
+   git clone [repository-url]
+   cd [repository-name]/server
    ```
 
-3. Install dependencies:
+2. Install dependencies:
 
-   ```sh
+   ```
    npm install
    ```
 
-4. Set up environment variables:
-   - Create a `.env` file in the root of the server directory
-   - Add necessary environment variables (see Environment Variables section below)
+3. Set up environment variables:
+   Create a `.env` file in the root of the server directory and add:
 
-5. Set up the database (see Database Setup section below)
+    ```
+    DATABASE_URL="postgres://tmmngcyo:MqHNCXGaVQMX7_TQiVyCmO16YUuUeLFG@raja.db.elephantsql.com/tmmngcyo "
+    JWT_SECRET = "94eb4a1159e0700968605c5ee8ab80015dc69b19eba38647e405de45d0d6c4ff"
+    ```
 
-6. Start the development server:
+## Development
 
-   ```sh
-   npm run dev
-   ```
-
-## Environment Variables
-
-Create a `.env` file in the root of the server directory with the following variables:
+To start the development server:
 
 ```
-DATABASE_URL="postgres://tmmngcyo:MqHNCXGaVQMX7_TQiVyCmO16YUuUeLFG@raja.db.elephantsql.com/tmmngcyo "
+npm run dev
 ```
 
-## Database Setup
+The server will start on the port specified in your `.env` file (default: 4000).
 
-Due to limitations with some hosted database services, we use `prisma db push` to set up and update our database schema:
+## Authentication
 
-1. Ensure you have Prisma CLI installed:
+The server uses JWT for authentication. The following endpoints are available:
 
-   ```sh
-   npm install prisma --save-dev
+- `POST /api/auth/login`: Log in a user
+- `POST /api/auth/register`: Register a new user
+- `GET /api/auth/verify-token`: Verify a JWT token
+
+## Protected Routes
+
+All routes under `/api/users` are protected and require a valid JWT token.
+
+## API Endpoints
+
+- `POST /api/auth/login`: User login
+- `POST /api/auth/register`: User registration
+- `GET /api/auth/verify-token`: Verify JWT token
+- `GET /api/users`: Get all users (protected)
+- `GET /api/users/:id`: Get user by ID (protected)
+- `PUT /api/users/:id`: Update user (protected)
+- `DELETE /api/users/:id`: Delete user (protected)
+
+## Database
+
+To make a change to the database schema, update the `schema.prisma` file and run:
+
    ```
-
-2. Push the schema directly to the database:
-
-   ```sh
    npx prisma db push
    ```
 
-   This command will apply your schema directly to the database without creating migration files.
+## Project Structure
 
-3. Generate the Prisma Client based on your schema:
+```
 
-   ```sh
-   npx prisma generate
-   ```
+server/
+├── prisma/
+│   └── schema.prisma
+├── src/
+│   ├── config/
+│   ├── controllers/
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── userRoutes.js
+│   ├── services/
+│   │   └── authService.js
+│   └── utils/
+│       └── jwt.js
+├── server.js
+└── ...configuration files
 
-After running these commands, your database will be set up with the correct schema, and you'll be able to use Prisma Client to interact with your database in your application code.
-
-For future schema changes:
-
-1. Make changes to your `schema.prisma` file.
-2. Run `npx prisma db push` to apply the changes directly to your database.
-3. Run `npx prisma generate` to update your Prisma Client.
-
-Note: This method bypasses Prisma's migration system. Be extra careful when making changes to your production database, and always backup your data before making schema changes.
-
-
-## API Endpoints and Authentication
-
-### API Structure
-- Controllers: `/src/controllers`
-- Routes: `/src/routes`
-- Middleware: `/src/middleware`
-
-### Main API Endpoints
-
-1. Authentication
-   - POST `/api/auth/login`: User login
-   - POST `/api/auth/register`: User registration
-   - POST `/api/auth/google`: Google OAuth login
-
-2. Users
-   - GET `/api/users`: Get all users (admin only)
-   - GET `/api/users/:id`: Get user by ID
-   - PUT `/api/users/:id`: Update user
-   - DELETE `/api/users/:id`: Delete user (admin only)
-
-3. Projects
-   - GET `/api/projects`: Get all projects
-   - GET `/api/projects/:id`: Get project by ID
-   - POST `/api/projects`: Create new project (admin only)
-   - PUT `/api/projects/:id`: Update project (admin only)
-   - DELETE `/api/projects/:id`: Delete project (admin only)
-
-4. Donations
-   - GET `/api/donations`: Get all donations
-   - GET `/api/donations/:id`: Get donation by ID
-   - POST `/api/donations`: Create new donation
-   - GET `/api/donations/user/:userId`: Get donations by user ID
-
-5. Providers
-   - GET `/api/providers`: Get all providers
-   - GET `/api/providers/:id`: Get provider by ID
-   - POST `/api/providers`: Create new provider (admin only)
-   - PUT `/api/providers/:id`: Update provider (admin only)
-   - DELETE `/api/providers/:id`: Delete provider (admin only)
-
-### Authentication
-
-- JWT is used for user sessions
-- Google OAuth is integrated for donor login
-- Authentication middleware protects routes
-
-### Adding Authentication to APIs
-
-1. The `authMiddleware` is applied globally to all routes except login and registration:
-
-   ```javascript
-   app.use(authMiddleware(['/api/auth/login', '/api/auth/register', '/api/auth/google']));
-   ```
-
-2. This means all other routes are automatically protected and require a valid JWT token.
-
-3. To access protected routes, include the JWT token in the Authorization header:
-
-   ```
-   Authorization: Bearer <your_jwt_token>
-   ```
-
-4. For routes that require specific roles (e.g., admin-only routes), use the `roleMiddleware`:
-
-   ```javascript
-   const roleMiddleware = require('../middleware/roleMiddleware');
-
-   router.post('/projects', roleMiddleware(['admin']), projectController.createProject);
-   ```
-
-5. To get the authenticated user in a controller:
-
-   ```javascript
-   const user = req.user; // Added by authMiddleware
-   ```
-
-Remember to handle authentication errors appropriately in your error handling middleware.
-
-
-## Security
-
-- Implementation of RBAC (Role-Based Access Control)
-- Middleware for handling CORS, rate limiting, and security headers
-- Input data validation
-
-## Testing
-
-- Unit tests with Jest
-- Integration tests
-- E2E tests with Cypress
-
-## Logging and Monitoring
-
-The system uses Grafana for monitoring and log visualization. This allows for efficient tracking of application performance, user activity, and facilitates early problem detection.
-
-## Contributing
-
-[Instructions for contributing to the project]
+```
 
 ## License
 
-[Type of license]
+This project is licensed under the MIT License.
