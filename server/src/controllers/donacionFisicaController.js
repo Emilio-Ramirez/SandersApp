@@ -59,7 +59,6 @@ exports.createDonacion = async (req, res) => {
     const newDonacion = await prisma.donacionFisica.create({ data });
     res.status(201).json(newDonacion);
   } catch (error) {
-    console.error(error); // Log the full error for debugging
     res.status(400).json({ message: error.message });
   }
 }
