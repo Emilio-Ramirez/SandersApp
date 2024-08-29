@@ -23,15 +23,16 @@ export default function BlogView() {
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
           Nuevo Proyecto
         </Button>
+
       </Stack>
 
       <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
         <PostSearch posts={posts} />
         <PostSort
           options={[
-            { value: 'latest', label: 'Latest' },
+            { value: 'latest', label: 'Reciente' },
             { value: 'popular', label: 'Popular' },
-            { value: 'oldest', label: 'Oldest' },
+            { value: 'oldest', label: 'Antiguo' },
           ]}
         />
       </Stack>

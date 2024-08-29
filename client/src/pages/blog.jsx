@@ -8,7 +8,7 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Proyectos</title>
+        <title> Proyectos | Minimal UI </title>
       </Helmet>
 
       <BlogView />
