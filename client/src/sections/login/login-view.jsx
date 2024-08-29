@@ -1,3 +1,4 @@
+// src/sections/login/login-view.jsx
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -42,10 +43,10 @@ export default function LoginView() {
     setError('');
 
     try {
-      const response = await api.post('/login', { email, password });
+      const response = await api.post('/api/auth/login', { email, password });
       if (response.data.token) {
         login(response.data.token);
-        router.push('/dashboard');
+        router.push('/');
       } else {
         setError('Login failed. Please check your credentials.');
       }
