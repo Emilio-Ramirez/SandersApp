@@ -1,3 +1,4 @@
+// src/sections/login/login-view.jsx
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,9 +14,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/routes/hooks';
+import api from 'src/utils/api';
 
 import { bgGradient } from 'src/theme/css';
+import { useAuth } from 'src/contexts/AuthContext';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
@@ -24,24 +26,50 @@ import Iconify from 'src/components/iconify';
 
 export default function LoginView() {
   const theme = useTheme();
-
-  const router = useRouter();
-
+  const { loginAndRedirect } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleClick = () => {
-    router.push('/dashboard');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await api.post('/api/auth/login', { email, password });
+      if (response.data.token) {
+        await loginAndRedirect(response.data.token, '/'); // Use loginAndRedirect and specify the redirect path
+      } else {
+        setError('Login failed. Please check your credentials.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred during login.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderForm = (
-    <>
+    <form onSubmit={handleLogin}>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" />
+        <TextField
+          name="email"
+          label="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
         <TextField
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -60,17 +88,23 @@ export default function LoginView() {
         </Link>
       </Stack>
 
+      {error && (
+        <Typography color="error" variant="body2" sx={{ mb: 3 }}>
+          {error}
+        </Typography>
+      )}
+
       <LoadingButton
         fullWidth
         size="large"
         type="submit"
         variant="contained"
         color="inherit"
-        onClick={handleClick}
+        loading={loading}
       >
         Login
       </LoadingButton>
-    </>
+    </form>
   );
 
   return (

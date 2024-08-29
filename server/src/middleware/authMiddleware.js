@@ -1,25 +1,21 @@
-// middleware/authMiddleware.js
+// src/middleware/authMiddleware.js
+
 const { verifyToken } = require('../utils/jwt');
 
-function authMiddleware(excludedPaths = []) {
-  return (req, res, next) => {
-    if (excludedPaths.includes(req.path)) {
-      return next();
-    }
+const authMiddleware = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
-    const token = authHeader.split(' ')[1];
-    try {
-      const decoded = verifyToken(token);
-      req.user = decoded;
-      next();
-    } catch (error) {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
-  };
-}
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    req.userId = decoded.userId;
+    next();
+  } catch {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
 module.exports = authMiddleware;

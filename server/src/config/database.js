@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 // server/src/config/database.js
 const { PrismaClient } = require('@prisma/client')
 
@@ -9,7 +11,7 @@ async function connectDB() {
     console.log('Database connected successfully')
   } catch (error) {
     console.error('Unable to connect to the database:', error)
-    process.exit(1)
+    process.exit(2)
   }
 }
 

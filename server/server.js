@@ -1,5 +1,7 @@
+/* eslint-disable no-console */
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('./src/middleware/authMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
@@ -9,14 +11,15 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Middleware
+app.use(cors()); // Add CORS middleware
 app.use(express.json());
 
-// Apply authentication middleware to all routes except login and user creation
-app.use(authMiddleware(['/api/auth/login', '/api/users/create']));
-
-// Routes
+// Routes that don't require authentication
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+
+
+// Routes that require authentication
+app.use('/api/users', authMiddleware, userRoutes);
 
 async function checkDatabaseConnection() {
   try {
@@ -30,7 +33,7 @@ async function checkDatabaseConnection() {
 }
 
 // Start the server
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 
 async function startServer() {
   const connected = await checkDatabaseConnection();

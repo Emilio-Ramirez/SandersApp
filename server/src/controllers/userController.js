@@ -1,5 +1,6 @@
 // server/src/controllers/userController.js
 const { prisma } = require('../config/database');
+const bcrypt = require('bcrypt');
 
 // Get all users
 exports.getUsers = async (req, res) => {
@@ -35,11 +36,44 @@ exports.getUserById = async (req, res) => {
 // Create a new user
 exports.createUser = async (req, res) => {
   try {
-    const { username, email } = req.body;
-    const newUser = await prisma.user.create({
-      data: { username, email },
+    const { username, email, password } = req.body;
+
+    // Check if all required fields are provided
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Username, email, and password are required' });
+    }
+
+    // Check if user with the same username or email already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: username },
+          { email: email }
+        ]
+      }
     });
-    res.status(201).json(newUser);
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username or email already in use' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the new user
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword
+      },
+    });
+
+    // Create a new object without the password
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    res.status(201).json(userWithoutPassword);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
