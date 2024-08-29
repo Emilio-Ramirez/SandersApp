@@ -49,12 +49,21 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, []);
 
+  const loginAndRedirect = useCallback(async (token, redirectTo) => {
+    localStorage.setItem('token', token);
+    await verifyToken(token); // Wait for token verification
+    if (redirectTo) {
+      window.location.href = redirectTo; // Use window.location for a full page reload
+    }
+  }, [verifyToken]);
+
   const contextValue = useMemo(() => ({
     user,
     login,
     logout,
+    loginAndRedirect,
     loading,
-  }), [user, login, logout, loading]);
+  }), [user, login, loginAndRedirect, logout, loading]);
 
   return (
     <AuthContext.Provider value={contextValue}>

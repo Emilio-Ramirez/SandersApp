@@ -14,8 +14,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { alpha, useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/routes/hooks';
-
 import api from 'src/utils/api';
 
 import { bgGradient } from 'src/theme/css';
@@ -28,9 +26,7 @@ import Iconify from 'src/components/iconify';
 
 export default function LoginView() {
   const theme = useTheme();
-  const router = useRouter();
-  const { login } = useAuth(); // Use the login function from AuthContext
-
+  const { loginAndRedirect } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,8 +41,7 @@ export default function LoginView() {
     try {
       const response = await api.post('/api/auth/login', { email, password });
       if (response.data.token) {
-        login(response.data.token);
-        router.push('/');
+        await loginAndRedirect(response.data.token, '/'); // Use loginAndRedirect and specify the redirect path
       } else {
         setError('Login failed. Please check your credentials.');
       }
