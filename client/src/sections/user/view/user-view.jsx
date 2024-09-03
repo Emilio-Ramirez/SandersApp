@@ -33,20 +33,16 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const { user } = useAuth(); // Get the user object from AuthContext
 
   const fetchUsers = useCallback(async () => {
     if (!user || !user.token) {
-      setError('No authentication token found. Please log in.');
-      setLoading(false);
+      console.error('No authentication token found. Please log in.');
       return;
     }
 
     try {
-      setLoading(true);
       const response = await api.get('/api/users', {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -55,15 +51,13 @@ export default function UserPage() {
       setUsers(response.data);
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        setError('Your session has expired. Please log in again.');
+        console.error('Your session has expired. Please log in again.');
       } else {
-        setError('Failed to fetch users. Please try again later.');
+        console.error('Failed to fetch users. Please try again later.');
       }
       console.error('Error fetching users:', err);
-    } finally {
-      setLoading(false);
     }
-  }, [user]); // fetchUsers now depends on user object
+  }, [user]);
 
   useEffect(() => {
     fetchUsers();
@@ -125,9 +119,6 @@ export default function UserPage() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
-
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Container>
