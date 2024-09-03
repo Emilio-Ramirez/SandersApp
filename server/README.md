@@ -69,8 +69,7 @@ All routes under `/api/users` are protected and require a valid JWT token.
 
 To make a change to the database schema, update the `schema.prisma` file and run:
 
-   ```
-   npx prisma db push
+   ``` npx prisma db push
    ```
 
 ## Project Structure

@@ -22,7 +22,7 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-
+import defaultAvatar from '../../../../public/assets/images/avatars/avatar_6.jpg';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -35,7 +35,7 @@ export default function UserPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const { user } = useAuth(); // Get the user object from AuthContext
 
   const fetchUsers = useCallback(async () => {
@@ -158,7 +158,7 @@ export default function UserPage() {
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'email', label: 'Email' },
                   { id: 'role', label: 'Role' },
                   { id: 'isVerified', label: 'Verified', align: 'center' },
                   { id: 'status', label: 'Status' },
@@ -171,12 +171,12 @@ export default function UserPage() {
                   .map((row) => (
                     <UserTableRow
                       key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
+                      name={row.username}
+                      role={row.role || 'admin'}
+                      status={row.status || 'active'}
+                      email={row.email}
+                      avatarUrl={row.avatarUrl || defaultAvatar}
+                      isVerified={row.isVerified || false}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />
