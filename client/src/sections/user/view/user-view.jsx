@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -10,7 +10,8 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { users } from 'src/_mock/user';
+import api from 'src/utils/api';  // Assuming you have an api utility
+import { useAuth } from 'src/contexts/AuthContext';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,16 +27,47 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 export default function UserPage() {
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const { user } = useAuth(); // Get the user object from AuthContext
+
+  const fetchUsers = useCallback(async () => {
+    if (!user || !user.token) {
+      setError('No authentication token found. Please log in.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get('/api/users', {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setUsers(response.data);
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        setError('Your session has expired. Please log in again.');
+      } else {
+        setError('Failed to fetch users. Please try again later.');
+      }
+      console.error('Error fetching users:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]); // fetchUsers now depends on user object
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -93,6 +125,9 @@ export default function UserPage() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Container>

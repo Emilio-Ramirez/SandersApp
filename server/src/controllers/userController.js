@@ -9,7 +9,6 @@ exports.getUsers = async (req, res) => {
       include: {
         donaciones: true,
         suscripciones: true,
-        logs: true
       }
     });
     res.json(users);

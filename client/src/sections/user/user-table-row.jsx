@@ -20,11 +20,11 @@ export default function UserTableRow({
   selected,
   name,
   avatarUrl,
-  company,
   role,
   isVerified,
   status,
   handleClick,
+  email, // Add this prop
 }) {
   const [open, setOpen] = useState(null);
 
@@ -52,7 +52,7 @@ export default function UserTableRow({
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
+        <TableCell>{email}</TableCell>
 
         <TableCell>{role}</TableCell>
 
@@ -95,11 +95,11 @@ export default function UserTableRow({
 
 UserTableRow.propTypes = {
   avatarUrl: PropTypes.any,
-  company: PropTypes.any,
   handleClick: PropTypes.func,
   isVerified: PropTypes.any,
   name: PropTypes.any,
   role: PropTypes.any,
   selected: PropTypes.any,
   status: PropTypes.string,
+  email: PropTypes.string,
 };
