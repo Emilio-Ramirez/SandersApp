@@ -22,7 +22,6 @@ import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
 import UserTableToolbar from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-import defaultAvatar from '../../../../public/assets/images/avatars/avatar_6.jpg';
 // ----------------------------------------------------------------------
 
 export default function UserPage() {
@@ -33,6 +32,7 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [users, setUsers] = useState([]);
+  const defaultAvatar = '/assets/images/avatars/avatar_6.jpg';
 
   const { user } = useAuth(); // Get the user object from AuthContext
 
