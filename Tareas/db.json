@@ -1,0 +1,15 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "Water Supply Project",
+      "description": "Providing clean water to remote villages."
+    },
+    {
+      "id": 2,
+      "name": "School Renovation",
+      "description": "Renovating schools in rural areas."
+    }
+  ]
+}
+
