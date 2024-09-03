@@ -33,12 +33,21 @@ This is the backend server for the Sanders App project.
     JWT_SECRET = "94eb4a1159e0700968605c5ee8ab80015dc69b19eba38647e405de45d0d6c4ff"
     ```
 
+4. Update prisma schema:
+
+   ```
+   npx prisma  generate
+
+    ```
+
 ## Development
 
 To start the development server:
 
 ```
+
 npm run dev
+
 ```
 
 The server will start on the port specified in your `.env` file (default: 4000).
@@ -70,7 +79,9 @@ All routes under `/api/users` are protected and require a valid JWT token.
 To make a change to the database schema, update the `schema.prisma` file and run:
 
    ```
+
    npx prisma db push
+
    ```
 
 ## Project Structure
