@@ -13,6 +13,9 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const AddProjectPage = lazy(() => import('src/pages/addProject'));
+export const ProjectDescriptionPage = lazy(() => import('src/pages/projectDescription'));
+
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +59,15 @@ export default function Router() {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
+    {
+      path: 'add-project',
+      element: <AddProjectPage />,
+    },
+    {
+      path: 'project/:id',
+      element: <ProjectDescriptionPage />,
+    },
+    
   ]);
   console.log('Routes:', routes);
   return routes;
