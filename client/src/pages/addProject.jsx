@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 const AddProject = () => {
   const [projectName, setProjectName] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
@@ -11,29 +16,34 @@ const AddProject = () => {
   };
 
   return (
-    <div>
-      <h2>Add New Project</h2>
+    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Add New Project
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Project Name:</label>
-          <input 
-            type="text" 
-            value={projectName} 
-            onChange={(e) => setProjectName(e.target.value)} 
-            required 
-          />
-        </div>
-        <div>
-          <label>Project Description:</label>
-          <textarea 
-            value={projectDescription} 
-            onChange={(e) => setProjectDescription(e.target.value)} 
-            required 
-          />
-        </div>
-        <button type="submit">Add Project</button>
+        <TextField
+          fullWidth
+          label="Project Name"
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
+          required
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          label="Project Description"
+          value={projectDescription}
+          onChange={(e) => setProjectDescription(e.target.value)}
+          required
+          margin="normal"
+          multiline
+          rows={4}
+        />
+        <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+          Add Project
+        </Button>
       </form>
-    </div>
+    </Box>
   );
 };
 

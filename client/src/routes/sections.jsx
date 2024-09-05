@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
+import AddProject from 'src/pages/addProject';
 import DashboardLayout from 'src/layouts/dashboard';
 
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -38,6 +39,8 @@ export default function Router() {
             { path: 'user', element: <UserPage /> },
             { path: 'products', element: <ProductsPage /> },
             { path: 'blog', element: <BlogPage /> },
+            {path: 'new-project', element: <AddProject/>},
+            {path: 'project/:id', element: <ProjectDescriptionPage/>},
             { path: 'donacion', element: <DonacionPage /> },
           ]
         },
@@ -59,15 +62,6 @@ export default function Router() {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
-    {
-      path: 'add-project',
-      element: <AddProjectPage />,
-    },
-    {
-      path: 'project/:id',
-      element: <ProjectDescriptionPage />,
-    },
-    
   ]);
   console.log('Routes:', routes);
   return routes;
