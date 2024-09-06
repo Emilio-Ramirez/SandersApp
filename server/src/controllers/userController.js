@@ -35,11 +35,24 @@ exports.getUserById = async (req, res) => {
 // Create a new user
 exports.createUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
 
     // Check if all required fields are provided
     if (!username || !email || !password) {
-      return res.status(400).json({ message: 'Username, email, and password are required' });
+      return res.status(400).json({
+        status: 'error',
+        code: 'MISSING_FIELDS',
+        message: 'Username, email, and password are required'
+      });
+    }
+
+    // Validate role
+    if (role && !['user', 'admin'].includes(role)) {
+      return res.status(400).json({
+        status: 'error',
+        code: 'INVALID_ROLE',
+        message: 'Invalid role. Must be either "user" or "admin"'
+      });
     }
 
     // Check if user with the same username or email already exists
@@ -53,7 +66,19 @@ exports.createUser = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'Username or email already in use' });
+      if (existingUser.username === username) {
+        return res.status(409).json({
+          status: 'error',
+          code: 'USERNAME_EXISTS',
+          message: 'Username already in use'
+        });
+      } else {
+        return res.status(409).json({
+          status: 'error',
+          code: 'EMAIL_EXISTS',
+          message: 'Email already in use'
+        });
+      }
     }
 
     // Hash the password
@@ -64,17 +89,79 @@ exports.createUser = async (req, res) => {
       data: {
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role: role || 'user' // Default to 'user' if no role is provided
       },
     });
 
-    // Create a new object without the password
+    // Remove password from the response
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = newUser;
 
-    res.status(201).json(userWithoutPassword);
+    res.status(201).json({
+      status: 'success',
+      message: 'User created successfully',
+      user: userWithoutPassword
+    });
+
   } catch (error) {
-    res.status(400).json({ message: error.message });
+
+    if (error.code === 'P2002') {
+      // Prisma unique constraint violation
+      return res.status(409).json({
+        status: 'error',
+        code: 'UNIQUE_CONSTRAINT_VIOLATION',
+        message: 'Username or email already exists'
+      });
+    }
+
+    res.status(500).json({
+      status: 'error',
+      code: 'SERVER_ERROR',
+      message: 'An unexpected error occurred while creating the user'
+    });
+  }
+};
+
+// Change user role
+exports.changeUserRole = async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { role } = req.body;
+
+    // Validate role
+    if (!['user', 'admin'].includes(role)) {
+      return res.status(400).json({
+        status: 'error',
+        code: 'INVALID_ROLE',
+        message: 'Invalid role. Must be either "user" or "admin"'
+      });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: { id: true, username: true, email: true, role: true }
+    });
+
+    res.json({
+      status: 'success',
+      message: 'User role updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({
+        status: 'error',
+        code: 'USER_NOT_FOUND',
+        message: 'User not found'
+      });
+    }
+    res.status(500).json({
+      status: 'error',
+      code: 'SERVER_ERROR',
+      message: 'An unexpected error occurred while updating the user role'
+    });
   }
 };
 

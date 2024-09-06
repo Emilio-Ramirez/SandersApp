@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('./src/middleware/authMiddleware');
+const roleMiddleware = require('./src/middleware/roleMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 
@@ -11,15 +12,14 @@ const app = express();
 const prisma = new PrismaClient();
 
 // Middleware
-app.use(cors()); // Add CORS middleware
+app.use(cors());
 app.use(express.json());
 
 // Routes that don't require authentication
 app.use('/api/auth', authRoutes);
 
-
-// Routes that require authentication
-app.use('/api/users', authMiddleware, userRoutes);
+// Routes that require authentication and admin role
+app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
 
 async function checkDatabaseConnection() {
   try {
