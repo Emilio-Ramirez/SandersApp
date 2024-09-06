@@ -1,68 +1,118 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
-import AddProject from 'src/pages/addProject';
-import DashboardLayout from 'src/layouts/dashboard';
+import UserDashboardLayout from 'src/layouts/userDashboard';
+import AdminDashboardLayout from 'src/layouts/adminDashboard';
 
 import ProtectedRoute from '../components/ProtectedRoute';
 
-export const IndexPage = lazy(() => import('src/pages/app'));
-export const BlogPage = lazy(() => import('src/pages/blog'));
-export const UserPage = lazy(() => import('src/pages/user'));
-export const DonacionPage = lazy(() => import('src/pages/donacion'));
+// Landing Page
+export const LandingPage = lazy(() => import('src/pages/LandingPage'));
+
+// Admin Pages
+export const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
+export const AdminUserPage = lazy(() => import('src/pages/admin/user'));
+export const AdminProductsPage = lazy(() => import('src/pages/admin/products'));
+export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
+export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
+export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
+export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDescription'));
+
+// User Pages
+export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
+export const UserProjectsPage = lazy(() => import('src/pages/user/projects'));
+export const UserDonationPage = lazy(() => import('src/pages/user/donation'));
+
+// Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
-export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-export const AddProjectPage = lazy(() => import('src/pages/addProject'));
-export const ProjectDescriptionPage = lazy(() => import('src/pages/projectDescription'));
-
-
-// ----------------------------------------------------------------------
+export const UnauthorizedPage = lazy(() => import('src/pages/Unauthorized'));
 
 export default function Router() {
-  console.log('Router component rendered');
   const routes = useRoutes([
     {
+      path: '/',
       element: (
-        <DashboardLayout>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
+        <Suspense fallback={<div>Loading...</div>}>
+          <LandingPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: '/admin',
+      element: (
+        <ProtectedRoute allowedRoles={['admin']}>
+          <AdminDashboardLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
+          </AdminDashboardLayout>
+        </ProtectedRoute>
       ),
       children: [
-        {
-          element: <ProtectedRoute />,
-          children: [
-            { element: <IndexPage />, index: true },
-            { path: 'user', element: <UserPage /> },
-            { path: 'products', element: <ProductsPage /> },
-            { path: 'blog', element: <BlogPage /> },
-            {path: 'new-project', element: <AddProject/>},
-            {path: 'project/:id', element: <ProjectDescriptionPage/>},
-            { path: 'donacion', element: <DonacionPage /> },
-          ]
-        },
+        { element: <AdminDashboardPage />, index: true },
+        { path: 'user', element: <AdminUserPage /> },
+        { path: 'products', element: <AdminProductsPage /> },
+        { path: 'blog', element: <AdminBlogPage /> },
+        { path: 'new-project', element: <AdminAddProjectPage /> },
+        { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
+        { path: 'donacion', element: <AdminDonacionPage /> },
+      ],
+    },
+    {
+      path: '/user',
+      element: (
+        <ProtectedRoute allowedRoles={['user', 'admin']}>
+          <UserDashboardLayout>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Outlet />
+            </Suspense>
+          </UserDashboardLayout>
+        </ProtectedRoute>
+      ),
+      children: [
+        { element: <UserDashboardPage />, index: true },
+        { path: 'projects', element: <UserProjectsPage /> },
+        { path: 'donation', element: <UserDonationPage /> },
       ],
     },
     {
       path: 'login',
-      element: <LoginPage />,
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <LoginPage />
+        </Suspense>
+      ),
     },
     {
       path: 'register',
-      element: <RegisterPage />,
-    }, 
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <RegisterPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: 'unauthorized',
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <UnauthorizedPage />
+        </Suspense>
+      ),
+    },
     {
       path: '404',
-      element: <Page404 />,
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <Page404 />
+        </Suspense>
+      ),
     },
     {
       path: '*',
       element: <Navigate to="/404" replace />,
     },
   ]);
-  console.log('Routes:', routes);
   return routes;
 }

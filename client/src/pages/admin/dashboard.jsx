@@ -4,11 +4,11 @@ import { AppView } from 'src/sections/overview/view';
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function DashboardPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard  </title>
       </Helmet>
 
       <AppView />
