@@ -43,11 +43,7 @@ export default function UserPage() {
     }
 
     try {
-      const response = await api.get('/api/users', {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await api.get('/api/admin/users');
       setUsers(response.data);
     } catch (err) {
       if (err.response && err.response.status === 401) {

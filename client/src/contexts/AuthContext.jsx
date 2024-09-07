@@ -62,12 +62,14 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     setUser(null);
   }, []);
 
   const loginAndRedirect = useCallback(async (loginData) => {
     const { token, userId, role } = loginData;
     localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
     const userData = { token, userId, role };
     setUser(userData);
 
