@@ -90,7 +90,14 @@ Usage example:
 <details>
 <summary>API Integration</summary>
 
-The `api.js` utility is used for making authenticated API requests. It automatically includes the JWT token in the request headers.
+The `api.js` utility is used for making authenticated API requests. It automatically includes the JWT token and user ID in the request headers.
+
+## Key Features
+
+- **Base URL Configuration**: Set up to communicate with the backend server (default: `http://localhost:4000`).
+- **Automatic Authentication**: Includes the JWT token in the `Authorization` header for authenticated requests.
+- **User Identification**: Adds the user ID in the `X-User-ID` header for user-specific operations.
+- **Error Handling**: Includes a response interceptor to handle 401 (Unauthorized) errors, triggering a custom `authError` event.
 
 </details>
 
