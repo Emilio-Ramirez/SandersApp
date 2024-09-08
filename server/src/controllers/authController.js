@@ -6,22 +6,23 @@ const jwt = require('jsonwebtoken');
 const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { user, token } = await login(email, password);
-    res.json({ user: { id: user.id, email: user.email }, token });
+    const { userId, token, role } = await login(email, password);
+    res.json({ userId, token, role }); // Include role in the response
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    if (error.message === 'Invalid email or password') {
+      res.status(401).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'An error occurred during login' });
+    }
   }
 };
-
 
 const verifyTokenValidity = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
-
-    // Check if the Authorization header starts with 'Bearer '
     const token = authHeader && authHeader.startsWith('Bearer ')
-      ? authHeader.split(' ')[1]  // If it does, extract the token
-      : authHeader;  // If not, assume the whole header is the token
+      ? authHeader.split(' ')[1]
+      : authHeader;
 
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
@@ -29,14 +30,18 @@ const verifyTokenValidity = async (req, res) => {
 
     try {
       const decoded = verifyToken(token);
-      res.status(200).json({ valid: true, userId: decoded.id });
+      res.status(200).json({
+        valid: true,
+        userId: decoded.userId, // Change from 'id' to 'userId' to match the payload
+        role: decoded.role
+      });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         return res.status(401).json({ message: 'Token has expired' });
       } else if (error instanceof jwt.JsonWebTokenError) {
         return res.status(401).json({ message: 'Invalid token' });
       } else {
-        throw error; // Re-throw unexpected errors
+        throw error;
       }
     }
   } catch (error) {
