@@ -21,11 +21,15 @@ export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/pr
 // User Pages
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
 export const UserProjectsPage = lazy(() => import('src/pages/user/projects'));
-export const UserDonationPage = lazy(() => import('src/pages/user/donation'));
+export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
+export const UserNewDonation = lazy(() => import('src/pages/user/newDonation'));
+export const UserMyCards = lazy(() => import('src/pages/user/MyCards'));
+export const UserNewCards = lazy(() => import('src/pages/user/newCard'));
 
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
+export const PayWithStripe = lazy(() => import('src/pages/payWithStripe'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const UnauthorizedPage = lazy(() => import('src/pages/Unauthorized'));
 
@@ -74,7 +78,10 @@ export default function Router() {
       children: [
         { element: <UserDashboardPage />, index: true },
         { path: 'projects', element: <UserProjectsPage /> },
-        { path: 'donation', element: <UserDonationPage /> },
+        { path: 'donacion', element: <UserDonationPage /> },
+        { path: 'new-donation', element: <UserNewDonation /> },
+        { path: 'my-cards', element: <UserMyCards /> },
+        { path: 'new-card', element: <UserNewCards /> }
       ],
     },
     {
@@ -91,6 +98,14 @@ export default function Router() {
         <Suspense fallback={<div>Loading...</div>}>
           <RegisterPage />
         </Suspense>
+      ),
+    },
+    {
+      path: 'payWithStripe',
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <PayWithStripe />
+        </Suspense >
       ),
     },
     {

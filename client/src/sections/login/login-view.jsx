@@ -1,6 +1,6 @@
 // src/sections/login/login-view.jsx
 import { useState } from 'react';
-import { Link as routerLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -126,6 +126,7 @@ export default function LoginView() {
           top: { xs: 16, md: 24 },
           left: { xs: 16, md: 24 },
         }}
+        component={RouterLink} to="/"
       />
 
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
@@ -141,7 +142,7 @@ export default function LoginView() {
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
             <Link
-              component={routerLink}
+              component={RouterLink} 
               to="/register"
               variant="subtitle2"
               sx={{ ml: 0.5 }}>

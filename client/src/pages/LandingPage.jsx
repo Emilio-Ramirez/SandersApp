@@ -37,6 +37,16 @@ const LandingPage = () => (
         </Button>
         <Button
           component={RouterLink}
+          to="/payWithStripe"
+          variant="contained"
+          color="primary"
+          size="large"
+          sx={{ mr: 2 }}
+        >
+          Dona Ahora
+        </Button>
+        <Button
+          component={RouterLink}
           to="/register"
           variant="outlined"
           color="primary"
