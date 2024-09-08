@@ -1,12 +1,11 @@
 // src/components/ProtectedRoute.jsx
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 
-const ProtectedRoute = ({ allowedRoles }) => {
+const ProtectedRoute = ({ allowedRoles, children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -21,11 +20,12 @@ const ProtectedRoute = ({ allowedRoles }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <Outlet />;
+  return children;
 };
 
 ProtectedRoute.propTypes = {
-  allowedRoles: PropTypes.arrayOf(PropTypes.string)
+  allowedRoles: PropTypes.arrayOf(PropTypes.string),
+  children: PropTypes.node.isRequired
 };
 
 export default ProtectedRoute;
