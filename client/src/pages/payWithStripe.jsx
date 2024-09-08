@@ -1,3 +1,4 @@
+// src/pages/payWithStripe.jsx
 import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
