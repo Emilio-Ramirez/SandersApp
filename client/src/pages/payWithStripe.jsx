@@ -15,7 +15,7 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
-
+import Logo from 'src/components/logo'; // Import the Logo component
 
 export default function DonacionPage() {
   const [country, setCountry] = useState('Mexico');
@@ -44,6 +44,13 @@ export default function DonacionPage() {
         overflow: 'hidden',
       }}
     >
+      <Logo
+        sx={{
+          position: 'fixed',
+          top: { xs: 16, md: 24 },
+          left: { xs: 16, md: 24 },
+        }}
+      />
       <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Grid container spacing={4} sx={{ flexGrow: 1 }}>
           {/* Left side - Title and Price */}
