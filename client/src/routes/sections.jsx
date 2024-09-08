@@ -26,6 +26,7 @@ export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const RegisterPage = lazy(() => import('src/pages/register'));
+export const PayWithStripe = lazy(() => import('src/pages/payWithStripe'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const UnauthorizedPage = lazy(() => import('src/pages/Unauthorized'));
 
@@ -91,6 +92,14 @@ export default function Router() {
         <Suspense fallback={<div>Loading...</div>}>
           <RegisterPage />
         </Suspense>
+      ),
+    },
+    {
+      path: 'payWithStripe',
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <PayWithStripe />
+        </Suspense >
       ),
     },
     {

@@ -13,7 +13,7 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'donaciones',
+    title: 'mis donaciones',
     path: '/user/donacion',
     icon: icon('ic_user'),
   },

@@ -100,7 +100,7 @@ export default function DonacionPage() {
         <Typography variant="h4">Mis Donaciones</Typography>
 
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          Nueva Donacion
+          New Donacion
         </Button>
       </Stack>
 
