@@ -14,8 +14,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-import Logo from 'src/components/logo'; // Import the Logo component
 
 export default function DonacionPage() {
   const [country, setCountry] = useState('Mexico');

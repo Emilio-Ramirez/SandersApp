@@ -11,21 +11,21 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { donaciones } from 'src/_mock/donacion';
+import { cards } from 'src/_mock/cards';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import TableNoData from '../table-no-data';
+import CardTableRow from '../cards-table-row';
+import CardTableHead from '../cards-table-head';
 import TableEmptyRows from '../table-empty-rows';
-import DonacionTableRow from '../donacion-table-row';
-import DonacionTableHead from '../donacion-table-head';
-import DonacionTableToolbar from '../donacion-table-toolbar';
+import CardTableToolbar from '../cards-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
 
-export default function DonacionPage() {
+export default function MyCardsPage() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -44,7 +44,7 @@ export default function DonacionPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = donaciones.map((n) => n.name);
+      const newSelecteds = cards.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -84,7 +84,7 @@ export default function DonacionPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: donaciones,
+    inputData: cards,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -94,30 +94,19 @@ export default function DonacionPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Mis Donaciones</Typography>
-
+        <Typography variant="h4">Mis Tarjetas</Typography>
         <Button
           variant="contained"
-          sx={{
-            backgroundColor: '#FFA500', // Orange
-            '&:hover': {
-              backgroundColor: '#FF8C00', // Dark Orange
-            },
-            color: 'white',
-          }}
-          startIcon={<Iconify icon="ion:card" />}
-          onClick={() => navigate('/user/my-cards')}
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => navigate('/user/new-card')}
         >
-          Mis Tarjetas
-        </Button>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Donacion
+          Agregar Tarjeta
         </Button>
       </Stack>
 
       <Card>
-        <DonacionTableToolbar
+        <CardTableToolbar
           numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
@@ -126,18 +115,18 @@ export default function DonacionPage() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <DonacionTableHead
+              <CardTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={donaciones.length}
+                rowCount={cards.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
+                  { id: 'cardNumber', label: 'Card Number' },
+                  { id: 'expiryDate', label: 'Expiry Date' },
+                  { id: 'isDefault', label: 'Default', align: 'center' },
                   { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
@@ -146,14 +135,13 @@ export default function DonacionPage() {
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <DonacionTableRow
+                    <CardTableRow
                       key={row.id}
                       name={row.name}
-                      role={row.role}
+                      cardNumber={row.cardNumber}
+                      expiryDate={row.expiryDate}
+                      isDefault={row.isDefault}
                       status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
                     />
@@ -161,7 +149,7 @@ export default function DonacionPage() {
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, donaciones.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, cards.length)}
                 />
 
                 {notFound && <TableNoData query={filterName} />}
@@ -173,13 +161,13 @@ export default function DonacionPage() {
         <TablePagination
           page={page}
           component="div"
-          count={donaciones.length}
+          count={cards.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
-    </Container >
+    </Container>
   );
 }
