@@ -1,3 +1,4 @@
+// scr/contexts/AuthContext.jsx
 import PropTypes from 'prop-types';
 import React, { useMemo, useState, useEffect, useCallback, createContext } from 'react';
 
@@ -15,28 +16,43 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data.valid) {
-        setUser({ token, userId: response.data.userId });
-      } else {
-        localStorage.removeItem('token');
-        setUser(null);
+        const userData = {
+          token,
+          userId: response.data.userId,
+          role: response.data.role
+        };
+        setUser(userData);
+        setLoading(false);
+        console.log('User data set:', userData);
+        return userData;
       }
+      throw new Error('Invalid token');
     } catch (error) {
       console.error('Token verification failed:', error);
       localStorage.removeItem('token');
       setUser(null);
-    } finally {
       setLoading(false);
+      return null;
     }
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    console.log('AuthProvider - Token:', token);
-    if (token) {
-      verifyToken(token);
-    } else {
-      setLoading(false);
-    }
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const userData = await verifyToken(token);
+        if (userData) {
+          // Log the user data after the state has been updated
+          console.log('User authenticated:', userData);
+        } else {
+          console.log('Authentication failed');
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, [verifyToken]);
 
   const login = useCallback((token) => {
@@ -49,13 +65,19 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, []);
 
-  const loginAndRedirect = useCallback(async (token, redirectTo) => {
+  const loginAndRedirect = useCallback(async (loginData) => {
+    const { token, userId, role } = loginData;
     localStorage.setItem('token', token);
-    await verifyToken(token); // Wait for token verification
-    if (redirectTo) {
-      window.location.href = redirectTo; // Use window.location for a full page reload
+    const userData = { token, userId, role };
+    setUser(userData);
+
+    // Redirect based on role
+    if (role === 'admin') {
+      window.location.href = '/admin/';
+    } else {
+      window.location.href = '/user/';
     }
-  }, [verifyToken]);
+  }, []);
 
   const contextValue = useMemo(() => ({
     user,
@@ -63,6 +85,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loginAndRedirect,
     loading,
+    isAdmin: user?.role === 'admin', // Add this line
   }), [user, login, loginAndRedirect, logout, loading]);
 
   return (

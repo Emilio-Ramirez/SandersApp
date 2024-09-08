@@ -34,6 +34,8 @@ export default function LoginView() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // src/sections/login/login-view.jsx
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -42,7 +44,7 @@ export default function LoginView() {
     try {
       const response = await api.post('/api/auth/login', { email, password });
       if (response.data.token) {
-        await loginAndRedirect(response.data.token, '/'); // Use loginAndRedirect and specify the redirect path
+        await loginAndRedirect(response.data);
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -138,10 +140,10 @@ export default function LoginView() {
 
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
-            <Link 
-              component={routerLink} 
-              to="/register" 
-              variant="subtitle2" 
+            <Link
+              component={routerLink}
+              to="/register"
+              variant="subtitle2"
               sx={{ ml: 0.5 }}>
               Get started
             </Link>
