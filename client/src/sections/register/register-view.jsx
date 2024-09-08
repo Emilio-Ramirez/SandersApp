@@ -35,37 +35,37 @@ export default function RegisterView() {
   const [error, setError] = useState('');
 
 
-const handleRegister = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    const response = await api.post('/api/auth/register', { username, email, password });
-    if (response.status === 201){
-      navigate('/login', { state: { message: 'Registration successful. Please log in.' } });
-    } else {
-      setError(response.data.message || 'Registration failed. Please try again.');
-    }
-  } catch (err) {
-    if (err.response) {
-      if (err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else if (err.response.data && typeof err.response.data === 'object') {
-        const errorMessages = Object.values(err.response.data).flat().join(', ');
-        setError(`Registration failed: ${errorMessages}`);
+    try {
+      const response = await api.post('/api/auth/register', { username, email, password });
+      if (response.status === 201) {
+        navigate('/login', { state: { message: 'Registration successful. Please log in.' } });
       } else {
-        setError(`Registration failed: ${err.response.status} ${err.response.statusText}`);
+        setError(response.data.message || 'Registration failed. Please try again.');
       }
-    } else if (err.request) {
-      setError('No response received from server. Please try again later.');
-    } else {
-      setError('An error occurred while sending the request. Please try again.');
+    } catch (err) {
+      if (err.response) {
+        if (err.response.data && err.response.data.message) {
+          setError(err.response.data.message);
+        } else if (err.response.data && typeof err.response.data === 'object') {
+          const errorMessages = Object.values(err.response.data).flat().join(', ');
+          setError(`Registration failed: ${errorMessages}`);
+        } else {
+          setError(`Registration failed: ${err.response.status} ${err.response.statusText}`);
+        }
+      } else if (err.request) {
+        setError('No response received from server. Please try again later.');
+      } else {
+        setError('An error occurred while sending the request. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const renderForm = (
     <form onSubmit={handleRegister}>
@@ -141,6 +141,7 @@ const handleRegister = async (e) => {
           top: { xs: 16, md: 24 },
           left: { xs: 16, md: 24 },
         }}
+        component={RouterLink} to="/"
       />
 
       <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>

@@ -1,10 +1,13 @@
 // src/pages/payWithStripe.jsx 
 
 import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
+import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
@@ -38,7 +41,7 @@ export default function DonacionPage() {
   return (
     <Box
       sx={{
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -50,13 +53,22 @@ export default function DonacionPage() {
           top: { xs: 16, md: 24 },
           left: { xs: 16, md: 24 },
         }}
+        component={RouterLink} to="/"
       />
-      <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Container maxWidth="lg" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', py: 5 }}>
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h2" gutterBottom>
+            Juntos, Llevamos Agua a Quien Más lo Necesita
+          </Typography>
+          <Typography variant="h5" color="text.secondary">
+            Tu donación ayuda a proporcionar agua limpia a comunidades vulnerables
+          </Typography>
+        </Box>
+
         <Grid container spacing={4} sx={{ flexGrow: 1 }}>
-          {/* Left side - Title and Price */}
-          <Grid item xs={12} md={4} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: '100%' }}>
-              <Typography variant="h4" gutterBottom align="center">Gracias por donar</Typography>
+          <Grid item xs={12} md={5}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', p: 4 }}>
+              <Typography variant="h4" gutterBottom align="center">Monto de tu Donación</Typography>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -72,15 +84,25 @@ export default function DonacionPage() {
                   '& .MuiOutlinedInput-input': { textAlign: 'center' }
                 }}
               />
-            </Box>
+              <Typography variant="body1" align="center" mt={2}>
+                Cada peso cuenta para llevar agua limpia a quienes más lo necesitan
+              </Typography>
+              <Alert severity="info" sx={{ mt: 3 }}>
+                <Typography variant="body2">
+                  ¿Quieres donar a un proyecto específico y ver su progreso?
+                  <Link component={RouterLink} to="/register" sx={{ ml: 1 }}>
+                    Regístrate aquí
+                  </Link>
+                </Typography>
+              </Alert>
+            </Card>
           </Grid>
 
-          {/* Right side - Payment Form */}
-          <Grid item xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Card sx={{ width: '100%', maxHeight: '90vh', overflow: 'auto' }}>
-              <Stack spacing={2} sx={{ p: 3 }}>
+          <Grid item xs={12} md={7}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Stack spacing={3} sx={{ p: 4 }}>
                 <Typography variant="subtitle1" align="center">
-                  Pay with card
+                  Información de Pago
                 </Typography>
 
                 <TextField
@@ -90,7 +112,7 @@ export default function DonacionPage() {
                   size="small"
                 />
 
-                <Typography variant="subtitle2">Card information</Typography>
+                <Typography variant="subtitle2">Información de la Tarjeta</Typography>
                 <TextField
                   fullWidth
                   placeholder="1234 1234 1234 1234"
@@ -126,8 +148,8 @@ export default function DonacionPage() {
 
                 <TextField
                   fullWidth
-                  label="Cardholder name"
-                  placeholder="Full name on card"
+                  label="Nombre del titular"
+                  placeholder="Nombre completo en la tarjeta"
                   variant="outlined"
                   size="small"
                 />
@@ -138,12 +160,20 @@ export default function DonacionPage() {
                   fullWidth
                   size="small"
                 >
-                  <MenuItem value="Mexico">Mexico</MenuItem>
+                  <MenuItem value="Mexico">México</MenuItem>
+                  {/* Add more countries as needed */}
                 </Select>
 
-                <Button variant="contained" fullWidth color="primary">
-                  Pay ${formattedDonationAmount}
+                <Button variant="contained" fullWidth color="primary" size="large">
+                  Donar ${formattedDonationAmount}
                 </Button>
+
+                <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                  ¿Quieres hacer donaciones mensuales y recibir actualizaciones?{' '}
+                  <Link component={RouterLink} to="/register">
+                    Regístrate aquí
+                  </Link>
+                </Typography>
 
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Stack direction="row" alignItems="center" spacing={1}>

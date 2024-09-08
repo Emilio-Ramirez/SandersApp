@@ -22,6 +22,7 @@ export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/pr
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
 export const UserProjectsPage = lazy(() => import('src/pages/user/projects'));
 export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
+export const UserNewDonation = lazy(() => import('src/pages/user/newDonation'));
 export const UserMyCards = lazy(() => import('src/pages/user/MyCards'));
 export const UserNewCards = lazy(() => import('src/pages/user/newCard'));
 
@@ -78,6 +79,7 @@ export default function Router() {
         { element: <UserDashboardPage />, index: true },
         { path: 'projects', element: <UserProjectsPage /> },
         { path: 'donacion', element: <UserDonationPage /> },
+        { path: 'new-donation', element: <UserNewDonation /> },
         { path: 'my-cards', element: <UserMyCards /> },
         { path: 'new-card', element: <UserNewCards /> }
       ],

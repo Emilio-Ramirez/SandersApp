@@ -111,8 +111,13 @@ export default function DonacionPage() {
           Mis Tarjetas
         </Button>
 
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Donacion
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={() => navigate('/user/new-donation')}
+        >
+          Nueva Donación
         </Button>
       </Stack>
 
