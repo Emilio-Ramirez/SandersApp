@@ -21,7 +21,7 @@ export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/pr
 // User Pages
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
 export const UserProjectsPage = lazy(() => import('src/pages/user/projects'));
-export const UserDonationPage = lazy(() => import('src/pages/user/donation'));
+export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
 
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -74,7 +74,7 @@ export default function Router() {
       children: [
         { element: <UserDashboardPage />, index: true },
         { path: 'projects', element: <UserProjectsPage /> },
-        { path: 'donation', element: <UserDonationPage /> },
+        { path: 'donacion', element: <UserDonationPage /> },
       ],
     },
     {
