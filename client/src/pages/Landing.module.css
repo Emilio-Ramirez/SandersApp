@@ -30,3 +30,15 @@
 .callToAction {
   text-align: center;
 }
+
+.customImage {
+  width: 100px;           /* Ancho de la imagen */
+  border-radius: 8px;      /* Bordes redondeados */
+  margin: 10px;            /* Espacio entre imágenes */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Sombra */
+  transition: transform 0.3s ease;  /* Transición suave al hacer hover */
+}
+
+.customImage:hover {
+  transform: scale(1.1);  
+}

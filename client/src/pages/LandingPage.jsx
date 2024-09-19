@@ -2,10 +2,25 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import Sanders from './Sanders.png';
+import Aba from './aba.png';
 
 const LandingPage = () => (
   <Container maxWidth="lg">
-    <Box py={6} textAlign="center" sx={{ backgroundColor: '#f5f5f5', padding: '40px' }}>
+    {/* Sección Hero con imagen de fondo */}
+    <Box 
+      py={6} 
+      textAlign="center" 
+      sx={{
+        backgroundImage: `url(${Sanders})`,  // Imagen de fondo
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundColor: '#f5f5f5',  // Color de fondo por si la imagen no carga
+        padding: '40px'
+      }}
+    >
+
+
+
       <Typography variant="h3" component="h1" gutterBottom>
         Bienvenidos a la Fundación Sanders
       </Typography>
@@ -33,15 +48,9 @@ const LandingPage = () => (
           Iniciar Sesión
         </Button>
       </Box>
-
-      <Box mt={4}>
-        <img src={Sanders} 
-        alt="Descripción de la imagen"
-        style={{ width: '100%', maxWidth: '600px', height: 'auto' }} />
-      </Box>
-
     </Box>
 
+    {/* Otras secciones */}
     <Box py={6} sx={{ backgroundColor: '#ffffff', padding: '40px' }}>
       <Typography variant="h4" component="h2" gutterBottom>
         ¿Qué hacemos en la Fundación Sanders?
@@ -49,6 +58,9 @@ const LandingPage = () => (
       <Typography variant="body1" paragraph>
         Nuestra misión es proporcionar acceso al agua limpia y segura a comunidades que carecen de este recurso esencial. A través de proyectos de infraestructura, educación y sostenibilidad, impactamos positivamente la vida de miles de personas.
       </Typography>
+
+      <img src={Aba} alt="" className="customImage" />  
+      
       <Grid container spacing={4} mt={4}>
         <Grid item xs={12} sm={6} md={4}>
           <Box sx={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px' }}>
@@ -56,7 +68,7 @@ const LandingPage = () => (
               Instalación de Pozos
             </Typography>
             <Typography variant="body1">
-              Construimos sisternas en áreas rurales en la cuales no hay agua limpia para garantizar un suministro limpio continuo de agua natural.
+              Construimos cisternas en áreas rurales en las que no hay agua limpia para garantizar un suministro continuo de agua natural.
             </Typography>
           </Box>
         </Grid>
@@ -66,7 +78,7 @@ const LandingPage = () => (
               Educación Sanitaria
             </Typography>
             <Typography variant="body1">
-              Enseñamos a las comunidades sobre la importancia de la higiene, y el uso responsable y beneficioso del agua.
+              Enseñamos a las comunidades sobre la importancia de la higiene y el uso responsable del agua.
             </Typography>
           </Box>
         </Grid>
