@@ -1,6 +1,7 @@
 // server/src/controllers/userController.js
 const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
+const { createStripeCustomer, deleteStripeCustomer } = require('./stripeController');
 
 // Get all users
 exports.getUsers = async (req, res) => {
@@ -32,12 +33,12 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Create a new user
 exports.createUser = async (req, res) => {
+  let stripeCustomer = null;
   try {
     const { username, email, password, role } = req.body;
 
-    // Check if all required fields are provided
+    // Validaciones existentes...
     if (!username || !email || !password) {
       return res.status(400).json({
         status: 'error',
@@ -46,7 +47,6 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    // Validate role
     if (role && !['user', 'admin'].includes(role)) {
       return res.status(400).json({
         status: 'error',
@@ -55,7 +55,6 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    // Check if user with the same username or email already exists
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
@@ -81,22 +80,29 @@ exports.createUser = async (req, res) => {
       }
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the new user
+    // Crear el usuario primero
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
-        role: role || 'user' // Default to 'user' if no role is provided
+        role: role || 'user'
       },
     });
 
-    // Remove password from the response
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = newUser;
+    // Crear el cliente de Stripe
+    stripeCustomer = await createStripeCustomer(newUser);
+
+    // Actualizar el usuario con el ID del cliente de Stripe
+    const updatedUser = await prisma.user.update({
+      where: { id: newUser.id },
+      data: { stripeCustomerId: stripeCustomer.id }
+    });
+
+    // Eliminar la contraseña de la respuesta
+    const { password: _, ...userWithoutPassword } = updatedUser;
 
     res.status(201).json({
       status: 'success',
@@ -105,9 +111,19 @@ exports.createUser = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('Error in createUser:', error);
 
+    // Si se creó un cliente de Stripe pero hubo un error después, eliminar el cliente de Stripe
+    if (stripeCustomer) {
+      try {
+        await deleteStripeCustomer(stripeCustomer.id);
+      } catch (deleteError) {
+        console.error('Error deleting Stripe customer:', deleteError);
+      }
+    }
+
+    // Manejar diferentes tipos de errores
     if (error.code === 'P2002') {
-      // Prisma unique constraint violation
       return res.status(409).json({
         status: 'error',
         code: 'UNIQUE_CONSTRAINT_VIOLATION',

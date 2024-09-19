@@ -20,11 +20,11 @@ Este sistema de donaciones permite gestionar proyectos, proveedores, y donacione
 erDiagram
     User ||--o{ Donacion : realiza
     User ||--o{ Suscripcion : tiene
+    User ||--o{ Log : genera
     Proveedor ||--o{ Proyecto : suministra
     Proyecto ||--o{ Donacion : recibe
     Proyecto ||--o{ DonacionFisica : recibe
     Proyecto ||--o{ Estadistica : genera
-    User ||--o{ Log : genera
     Proyecto ||--o{ Log : genera
     Donacion ||--o{ Log : genera
     DonacionFisica ||--o{ Log : genera
@@ -34,6 +34,9 @@ erDiagram
         int id PK
         string username
         string email
+        string password
+        Role role
+        string stripeCustomerId
     }
     Proveedor {
         int id PK
@@ -47,7 +50,7 @@ erDiagram
         int id PK
         string nombre
         text descripcion
-        int proveedor FK
+        int proveedorId FK
         decimal costo_total
         date fecha_inicio
         date fecha_fin
@@ -56,8 +59,8 @@ erDiagram
     }
     Donacion {
         int id PK
-        int usuario FK
-        int proyecto FK
+        int usuarioId FK
+        int proyectoId FK
         decimal cantidad
         datetime fecha
         string stripe_id
@@ -65,14 +68,14 @@ erDiagram
     }
     DonacionFisica {
         int id PK
-        int proyecto FK
+        int proyectoId FK
         decimal cantidad
         datetime fecha
         text descripcion
     }
     Suscripcion {
         int id PK
-        int usuario FK
+        int usuarioId FK
         string stripe_subscription_id
         string estado
         datetime fecha_inicio
@@ -80,7 +83,7 @@ erDiagram
     }
     Estadistica {
         int id PK
-        int proyecto FK
+        int proyectoId FK
         int personas_ayudadas
         decimal agua_proporcionada
         date fecha
@@ -90,11 +93,11 @@ erDiagram
         string tipo
         string descripcion
         datetime fecha
-        int usuario FK
-        int proyecto FK
-        int donacion FK
-        int donacion_fisica FK
-        int suscripcion FK
+        int usuarioId FK
+        int proyectoId FK
+        int donacionId FK
+        int donacionFisicaId FK
+        int suscripcionId FK
     }
 ```
 
