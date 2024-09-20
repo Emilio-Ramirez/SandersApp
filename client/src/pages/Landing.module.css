@@ -32,7 +32,8 @@
 }
 
 .customImage {
-  width: 100px;           /* Ancho de la imagen */
+  width: 50px;           /* Ancho de la imagen */
+  height: 30px;
   border-radius: 8px;      /* Bordes redondeados */
   margin: 10px;            /* Espacio entre imágenes */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Sombra */
