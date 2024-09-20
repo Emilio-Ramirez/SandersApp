@@ -1,22 +1,13 @@
-// In userRoutes.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  changeUserRole
-} = require('../controllers/userController');
+const { createUser, getUsers, getUserById, updateUser, deleteUser, changeUserRole } = require('../controllers/userController');
 
-// Existing routes
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
-
-// New route for changing user role (accessible to all authenticated users for now)
-router.patch('/:id/role', changeUserRole);
+// Definir las rutas y asegurarse de que las funciones no estén undefined
+router.post('/users', createUser);
+router.get('/users', getUsers);
+router.get('/users/:id', getUserById);
+router.put('/users/:id', updateUser);
+router.delete('/users/:id', deleteUser);
+router.patch('/users/:id/role', changeUserRole);  // Por ejemplo, si hay una ruta para cambiar el rol de usuario
 
 module.exports = router;

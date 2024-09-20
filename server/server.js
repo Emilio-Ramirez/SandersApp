@@ -62,3 +62,6 @@ process.on('SIGINT', async () => {
 });
 
 module.exports = { app, prisma };
+
+// Registrar las rutas
+app.use('/api', userRoutes);
