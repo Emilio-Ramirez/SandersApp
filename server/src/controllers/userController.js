@@ -102,7 +102,9 @@ exports.createUser = async (req, res) => {
     });
 
     // Eliminar la contraseña de la respuesta
-    const { password: _, ...userWithoutPassword } = updatedUser;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: __, ...userWithoutPassword } = updatedUser;
+
 
     res.status(201).json({
       status: 'success',
@@ -110,19 +112,23 @@ exports.createUser = async (req, res) => {
       user: userWithoutPassword
     });
 
-  } catch (error) {
-    console.error('Error in createUser:', error);
-
-    // Si se creó un cliente de Stripe pero hubo un error después, eliminar el cliente de Stripe
+} catch (error) {
+    // If a Stripe customer was created but there was an error afterwards, delete the Stripe customer
     if (stripeCustomer) {
       try {
         await deleteStripeCustomer(stripeCustomer.id);
       } catch (deleteError) {
-        console.error('Error deleting Stripe customer:', deleteError);
+        res.status(500).json({
+          status: 'error',
+          code: 'STRIPE_CUSTOMER_DELETE_ERROR',
+          message: 'An error occurred while deleting the Stripe customer',
+          error: deleteError.message
+        });
+        return; // Add this to prevent further execution
       }
     }
 
-    // Manejar diferentes tipos de errores
+    // Handle different types of errors
     if (error.code === 'P2002') {
       return res.status(409).json({
         status: 'error',
@@ -137,9 +143,7 @@ exports.createUser = async (req, res) => {
       message: 'An unexpected error occurred while creating the user'
     });
   }
-};
-
-// Change user role
+};// Change user role
 exports.changeUserRole = async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
