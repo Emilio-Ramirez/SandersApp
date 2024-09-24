@@ -1,7 +1,9 @@
-// src/pages/payWithStripe.jsx 
-
+// src/pages/payWithStripe.jsx
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
 import { Link as RouterLink } from 'react-router-dom';
+import { Elements, useStripe, CardElement, useElements } from '@stripe/react-stripe-js';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -17,23 +19,113 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import api from 'src/utils/api';
+
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+
+import SuccessDialog from '../sections/stripePay/SuccessDialog';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+const CheckoutForm = ({ donationAmount, onSuccessfulDonation }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [error, setError] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setProcessing(true);
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    try {
+      const { data: { clientSecret } } = await api.post('/api/stripe/process-donation', {
+        amount: Math.round(donationAmount * 100),
+        currency: 'mxn',
+      });
+
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            email,
+          },
+        },
+      });
+
+      if (result.error) {
+        setError(result.error.message);
+      } else if (result.paymentIntent.status === 'succeeded') {
+        await api.post('/api/stripe/record-successful-donation', {
+          paymentIntentId: result.paymentIntent.id,
+          email,
+        });
+        onSuccessfulDonation();
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || err.message);
+    }
+
+    setProcessing(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <TextField
+        fullWidth
+        label="Email"
+        variant="outlined"
+        size="small"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        sx={{ mb: 2 }}
+      />
+      <CardElement options={{ style: { base: { fontSize: '16px' } } }} />
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        color="primary"
+        size="large"
+        disabled={!stripe || processing}
+        sx={{ mt: 2 }}
+      >
+        {processing ? 'Processing...' : `Donar $${donationAmount}`}
+      </Button>
+    </form>
+  );
+};
+
+CheckoutForm.propTypes = {
+  donationAmount: PropTypes.number.isRequired,
+  onSuccessfulDonation: PropTypes.func.isRequired,
+};
 
 export default function DonacionPage() {
   const [country, setCountry] = useState('Mexico');
   const [donationAmount, setDonationAmount] = useState('20.00');
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleDonationChange = (event) => {
     const value = event.target.value.replace(/[^0-9.]/g, '');
     const parts = value.split('.');
-    if (parts[0].length > 7) return; // Limit to 7 digits before decimal
+    if (parts[0].length > 7) return;
     if (parts.length > 1) {
-      parts[1] = parts[1].slice(0, 2); // Limit to 2 decimal places
+      parts[1] = parts[1].slice(0, 2);
       setDonationAmount(parts.join('.'));
     } else {
       setDonationAmount(value);
     }
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const formattedDonationAmount = Number(donationAmount).toFixed(2);
@@ -105,55 +197,12 @@ export default function DonacionPage() {
                   Información de Pago
                 </Typography>
 
-                <TextField
-                  fullWidth
-                  label="Email"
-                  variant="outlined"
-                  size="small"
-                />
-
-                <Typography variant="subtitle2">Información de la Tarjeta</Typography>
-                <TextField
-                  fullWidth
-                  placeholder="1234 1234 1234 1234"
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Stack direction="row" spacing={1}>
-                          <Iconify icon="logos:visa" />
-                          <Iconify icon="logos:mastercard" />
-                          <Iconify icon="logos:amex" />
-                          <Iconify icon="logos:jcb" />
-                        </Stack>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Stack direction="row" spacing={2}>
-                  <TextField
-                    placeholder="MM / YY"
-                    variant="outlined"
-                    size="small"
-                    sx={{ flexGrow: 1 }}
+                <Elements stripe={stripePromise}>
+                  <CheckoutForm 
+                    donationAmount={Number(donationAmount)} 
+                    onSuccessfulDonation={() => setOpenDialog(true)}
                   />
-                  <TextField
-                    placeholder="CVC"
-                    variant="outlined"
-                    size="small"
-                    sx={{ flexGrow: 1 }}
-                  />
-                </Stack>
-
-                <TextField
-                  fullWidth
-                  label="Nombre del titular"
-                  placeholder="Nombre completo en la tarjeta"
-                  variant="outlined"
-                  size="small"
-                />
-
+                </Elements>
                 <Select
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
@@ -163,10 +212,6 @@ export default function DonacionPage() {
                   <MenuItem value="Mexico">México</MenuItem>
                   {/* Add more countries as needed */}
                 </Select>
-
-                <Button variant="contained" fullWidth color="primary" size="large">
-                  Donar ${formattedDonationAmount}
-                </Button>
 
                 <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                   ¿Quieres hacer donaciones mensuales y recibir actualizaciones?{' '}
@@ -192,6 +237,7 @@ export default function DonacionPage() {
           </Grid>
         </Grid>
       </Container>
+      <SuccessDialog open={openDialog} onClose={handleCloseDialog} />
     </Box>
   );
 }
