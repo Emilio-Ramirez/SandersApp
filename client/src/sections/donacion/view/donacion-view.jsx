@@ -163,6 +163,7 @@ export default function DonacionPage() {
                       es_mensual={row.es_mensual}
                       fecha={row.fecha}
                       proyecto={row.proyecto}
+                      stripe_id={row.stripe_id}  // Add this line
                       selected={selected.indexOf(row.id) !== -1}
                       handleClick={(event) => handleClick(event, row.id)}
                     />
