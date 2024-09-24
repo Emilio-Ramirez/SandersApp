@@ -8,7 +8,7 @@ export default function DonacionPage() {
   return (
     <>
       <Helmet>
-        <title> Donaciones | Minimal UI </title>
+        <title> Donaciones</title>
       </Helmet>
 
       <DonacionView />
