@@ -24,7 +24,7 @@ import api from 'src/utils/api';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import SuccessDialog from '../sections/stripePay/SuccessDialog';
+import SuccessCard from '../sections/stripePay/SuccessCard';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -237,7 +237,7 @@ export default function DonacionPage() {
           </Grid>
         </Grid>
       </Container>
-      <SuccessDialog open={openDialog} onClose={handleCloseDialog} />
+      <SuccessCard open={openDialog} onClose={handleCloseDialog} />
     </Box>
   );
 }
