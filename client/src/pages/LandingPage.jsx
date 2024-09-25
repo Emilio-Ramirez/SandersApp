@@ -1,21 +1,18 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { Box, Button, Container, Grid, Typography, TextField } from '@mui/material';
-import Sanders from '../../public/assets/images/covers/cover_25.jpg';
-import Foto1 from '../../public/assets/images/covers/cover_18.jpg';
-import Foto2 from '../../public/assets/images/covers/cover_12.jpg';
-import Foto3 from '../../public/assets/images/covers/cover_11.jpg';
+import { Link as RouterLink } from 'react-router-dom'; 
+
+import { Box,Grid, Button,  Container, Typography } from '@mui/material';
+
 import dash1 from '../../public/assets/images/covers/dash_1.jpg';
 import dash2 from '../../public/assets/images/covers/dash_2.jpg';
 import dash3 from '../../public/assets/images/covers/dash_3.jpg';
 import dash4 from '../../public/assets/images/covers/dash_4.jpg';
 import dash5 from '../../public/assets/images/covers/dash_5.jpg';
 import dash6 from '../../public/assets/images/covers/dash_6.jpg';
-
-
-
-
-
+import Foto1 from '../../public/assets/images/covers/cover_18.jpg';
+import Foto2 from '../../public/assets/images/covers/cover_12.jpg';
+import Foto3 from '../../public/assets/images/covers/cover_11.jpg';
+import Sanders from '../../public/assets/images/covers/cover_25.jpg';
 
 
 const LandingPage = () => (
@@ -60,7 +57,23 @@ const LandingPage = () => (
       </Box>
     </Box>
 
-    
+    <Box py={1} sx={{ backgroundColor: '#f9f9f9', padding: '10px' }}>
+      <Typography variant="h3" component="h2" gutterBottom textAlign="center" color="black">
+        Ya puedes donar a tu proyecto favorito!!
+      </Typography>
+
+      <img src={dash2} alt="Proyecto 1" style={{ width: '100%', maxHeight: '100%', objectFit: 'cover' }} />
+
+      <Typography variant="h3" component="h2" gutterBottom textAlign="center" color="black">
+        Suscribete a un proyecto
+      </Typography>
+
+      <img src={dash2} alt="Proyecto 1" style={{ width: '100%', maxHeight: '100%', objectFit: 'cover' }} />
+
+      <Typography variant="body1" paragraph>
+        El Dashboard es una plataforma en línea que te permite:
+      </Typography>
+    </Box>
 
     <Box component="ul" sx={{ listStyleType: 'disc', pl: 4 }}>
 
