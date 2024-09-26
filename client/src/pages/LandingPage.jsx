@@ -25,7 +25,7 @@ const LandingPage = () => (
       <Box mt={4}>
         <Button
           component={RouterLink}
-          to="/payWithStripe"
+          to="/donar"
           variant="contained"
           color="primary"
           size="large"

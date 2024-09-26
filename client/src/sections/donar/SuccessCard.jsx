@@ -43,6 +43,8 @@ const SuccessCard = ({ open, onClose }) => {
           borderRadius: '16px',
           textAlign: 'center',
           boxShadow: 24,
+          backgroundColor: '#e8f5e9', // Light green background
+          border: '2px solid #4caf50', // Green border
         }}
       >
         <CardContent sx={{ p: 4 }}>

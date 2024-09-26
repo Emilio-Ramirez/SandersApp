@@ -1,4 +1,4 @@
-// src/pages/payWithStripe.jsx
+// src/sections/donar/view/donar-view.jsx
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
@@ -24,7 +24,7 @@ import api from 'src/utils/api';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import SuccessCard from '../sections/stripePay/SuccessCard';
+import SuccessCard from '../SuccessCard';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -107,7 +107,7 @@ CheckoutForm.propTypes = {
   onSuccessfulDonation: PropTypes.func.isRequired,
 };
 
-export default function DonacionPage() {
+export default function DonarView() {
   const [country, setCountry] = useState('Mexico');
   const [donationAmount, setDonationAmount] = useState('20.00');
   const [openDialog, setOpenDialog] = useState(false);
@@ -198,8 +198,8 @@ export default function DonacionPage() {
                 </Typography>
 
                 <Elements stripe={stripePromise}>
-                  <CheckoutForm 
-                    donationAmount={Number(donationAmount)} 
+                  <CheckoutForm
+                    donationAmount={Number(donationAmount)}
                     onSuccessfulDonation={() => setOpenDialog(true)}
                   />
                 </Elements>
