@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import Link from '@mui/material/Link';
+import Popover from '@mui/material/Popover';
 import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Popover from '@mui/material/Popover';
 import MenuItem from '@mui/material/MenuItem';
-import Link from '@mui/material/Link';
+import TableCell from '@mui/material/TableCell';
+import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
 
