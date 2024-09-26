@@ -1,35 +1,36 @@
+// server/src/controllers/userController.js
 const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
 const { createStripeCustomer, deleteStripeCustomer } = require('./stripeController');
 
 // Get all users
 exports.getUsers = async (req, res) => {
-    try {
-        const users = await prisma.user.findMany({
-            include: {
-                donaciones: true,
-                suscripciones: true,
-            }
-        });
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        donaciones: true,
+        suscripciones: true,
+      }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // Get a single user by ID
 exports.getUserById = async (req, res) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(req.params.id, 10) },
-        });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 exports.createUser = async (req, res) => {
@@ -70,42 +71,13 @@ exports.createUser = async (req, res) => {
           code: 'USERNAME_EXISTS',
           message: 'Username already in use'
         });
-
-        if (existingUser) {
-            return res.status(409).json({
-                status: 'error',
-                code: 'DUPLICATE',
-                message: 'Username or email already exists'
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword,
-                role: role || 'user',
-            },
+      } else {
+        return res.status(409).json({
+          status: 'error',
+          code: 'EMAIL_EXISTS',
+          message: 'Email already in use'
         });
-
-        // Excluir la contraseña del objeto devuelto
-        const userWithoutPassword = { ...newUser };
-        delete userWithoutPassword.password;
-
-        res.status(201).json({
-            status: 'success',
-            message: 'User created successfully',
-            user: userWithoutPassword
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: `Error creating user: ${error.message}`,  // Detallar el error
-            details: error
-        });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -140,7 +112,7 @@ exports.createUser = async (req, res) => {
       user: userWithoutPassword
     });
 
-} catch (error) {
+  } catch (error) {
     // If a Stripe customer was created but there was an error afterwards, delete the Stripe customer
     if (stripeCustomer) {
       try {
@@ -215,32 +187,28 @@ exports.changeUserRole = async (req, res) => {
 
 // Update a user
 exports.updateUser = async (req, res) => {
-    try {
-        const { username, email } = req.body;
-
-        const updatedUser = await prisma.user.update({
-            where: { id: parseInt(req.params.id, 10) },
-            data: {
-                username: username || undefined,  // Evitar que campos vacíos causen errores
-                email: email || undefined,
-            },
-        });
-        res.json(updatedUser);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+    const { username, email } = req.body;
+    const updatedUser = await prisma.user.update({
+      where: { id: parseInt(req.params.id) },
+      data: { username, email },
+    });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 // Delete a user
 exports.deleteUser = async (req, res) => {
-    try {
-        await prisma.user.delete({
-            where: { id: parseInt(req.params.id, 10) },
-        });
-        res.json({ message: 'User deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+    await prisma.user.delete({
+      where: { id: parseInt(req.params.id) },
+    });
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 // Change user role
@@ -276,3 +244,138 @@ exports.changeUserRole = async (req, res) => {
         });
     }
 };
+/*model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  donaciones   Donacion[]
+  suscripciones Suscripcion[]
+  logs         Log[]
+}
+*/
+  
+      
+        
+        
+        
+    
+    
+      
+        
+        
+      
+    
+    
+      
+    
+    
+        
+          
+          
+          
+      
+    
+      
+    
+    
+      
+    
+    
+    
+    
+      
+      
+  
+  
+  
+      
+      
+      
+        
+          
+          
+        
+        
+      
+      
+  
+  
+  
+    
+      
+        
+        
+        
+      
+      
+        
+          
+          
+          
+        
+      
+    
+      
+        
+        
+        
+      
+      
+        
+        
+        
+      
+      
+          
+            
+            
+            
+          
+      
+      
+      
+      
+    
+          
+            
+            
+            
+            
+          
+        
+      
+      
+        
+          
+          
+          
+          
+          
+          
+      
+        
+            
+          
+          
+          
+          
+            
+            
+        
+            
+        
+        
+        
+        
+          
+          
+          
+          
+        
+        
+      
+        
+        
+        
+          
+      
