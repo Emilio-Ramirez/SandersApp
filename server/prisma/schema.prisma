@@ -13,13 +13,14 @@ enum Role {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  email      String   @unique
-  password   String
-  role       String   @default("user")
-  donaciones Donacion[]  // Relación con las donaciones
-  suscripciones Suscripcion[]  // Relación con las suscripciones
+  id               Int           @id @default(autoincrement())
+  username         String        @unique
+  email            String        @unique
+  password         String
+  role             Role          @default(user)  
+  stripeCustomerId String?
+  donaciones       Donacion[]
+  suscripciones    Suscripcion[]
 }
 
 
@@ -51,16 +52,16 @@ model Proyecto {
 
 model Donacion {
   id         Int       @id @default(autoincrement())
-  usuarioId  Int
+  usuarioId  Int?   
   proyectoId Int?
   cantidad   Decimal
   fecha      DateTime
   stripe_id  String?
   es_mensual Boolean
+  email      String?
   proyecto   Proyecto? @relation(fields: [proyectoId], references: [id])
-  usuario    User      @relation(fields: [usuarioId], references: [id])
+  usuario    User?     @relation(fields: [usuarioId], references: [id])
 }
-
 model DonacionFisica {
   id          Int       @id @default(autoincrement())
   proyectoId  Int?

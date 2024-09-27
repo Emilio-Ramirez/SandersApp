@@ -2,14 +2,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const Stripe = require('stripe');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('./src/middleware/authMiddleware');
 const roleMiddleware = require('./src/middleware/roleMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const donacionRoutes = require('./src/routes/donacionRoutes');
+const stripeRoutes = require('./src/routes/stripeRoutes');
 
 const app = express();
 const prisma = new PrismaClient();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Middleware
 app.use(cors());
@@ -17,9 +21,21 @@ app.use(express.json());
 
 // Routes that don't require authentication
 app.use('/api/auth', authRoutes);
+app.use('/api/stripe', stripeRoutes);
 
 // Routes that require authentication and admin role
 app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
+app.use('/api/admin/donaciones', authMiddleware, roleMiddleware(['admin']), donacionRoutes);
+
+app.get('/api/verify-stripe', async (req, res) => {
+  try {
+    await stripe.customers.list({ limit: 1 });
+    res.json({ success: true, message: 'Stripe connection verified successfully' });
+  } catch (error) {
+    console.error('Stripe connection verification failed:', error);
+    res.status(500).json({ success: false, message: 'Stripe connection verification failed', error: error.message });
+  }
+});
 
 async function checkDatabaseConnection() {
   try {

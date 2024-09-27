@@ -5,14 +5,15 @@
 ```mermaid
 stateDiagram-v2
     [*] --> LandingPage
-    state LandingPageChoice <<choice>>
-    LandingPage --> LandingPageChoice
-    LandingPageChoice --> Login : Iniciar sesión
-    LandingPageChoice --> Register : Registrarse
-    LandingPageChoice --> QuickDonation : Donación rápida
-    Login --> [*]
-    Register --> [*]
-    QuickDonation --> [*]
+    LandingPage --> Login : Iniciar sesión
+    LandingPage --> Register : Registrarse
+    LandingPage --> QuickDonation : Donación rápida
+    Login --> RedirectToDashboard
+    Register --> RedirectToLogin
+    QuickDonation --> ReturnToLandingPage
+    RedirectToDashboard --> [*]
+    RedirectToLogin --> [*]
+    ReturnToLandingPage --> [*]
 ```
 
 2. Proceso de registro:
@@ -26,7 +27,8 @@ stateDiagram-v2
     ValidateForm --> RegistrationSuccess : Datos válidos
     ValidateForm --> FillRegistrationForm : Datos inválidos
     RegistrationSuccess --> SendConfirmationEmail
-    SendConfirmationEmail --> [*]
+    SendConfirmationEmail --> RedirectToLogin
+    RedirectToLogin --> [*]
 ```
 
 3. Donación rápida:
@@ -39,7 +41,8 @@ stateDiagram-v2
     SelectProject --> EnterDonationAmount
     EnterDonationAmount --> ProcessPayment
     ProcessPayment --> SendConfirmationEmail
-    SendConfirmationEmail --> [*]
+    SendConfirmationEmail --> ReturnToLandingPage
+    ReturnToLandingPage --> [*]
 ```
 
 ### Usuario
@@ -53,7 +56,8 @@ stateDiagram-v2
     state ValidateCredentials <<choice>>
     ValidateCredentials --> UserDashboard : Credenciales correctas
     ValidateCredentials --> EnterCredentials : Credenciales incorrectas
-    UserDashboard --> [*]
+    UserDashboard --> RedirectToDashboard
+    RedirectToDashboard --> [*]
 ```
 
 2. Dashboard de usuario:
@@ -61,15 +65,14 @@ stateDiagram-v2
 ```mermaid
 stateDiagram-v2
     [*] --> UserDashboard
-    state UserDashboardChoice <<choice>>
-    UserDashboard --> UserDashboardChoice
-    UserDashboardChoice --> UserProfile : Ver perfil
-    UserDashboardChoice --> ProjectsSection : Ver proyectos
-    UserDashboardChoice --> DonationsSection : Ver donaciones
+    UserDashboard --> UserProfile
+    UserDashboard --> ProjectsSection
+    UserDashboard --> DonationsSection
     UserProfile --> UserDashboard
     ProjectsSection --> UserDashboard
     DonationsSection --> UserDashboard
-    UserDashboard --> [*]
+    UserDashboard --> Logout
+    Logout --> [*]
 ```
 
 3. Gestión de perfil de usuario:
@@ -83,7 +86,8 @@ stateDiagram-v2
     state SaveChanges <<choice>>
     SaveChanges --> UserProfile : Cambios guardados
     SaveChanges --> EditPersonalInfo : Error al guardar
-    UserProfile --> [*]
+    UserProfile --> ReturnToDashboard
+    ReturnToDashboard --> [*]
 ```
 
 4. Sección de proyectos:
@@ -97,7 +101,8 @@ stateDiagram-v2
     ListProjects --> ViewProjectDetails
     ViewProjectDetails --> DonateToProject
     DonateToProject --> ConfirmDonation
-    ViewProjectDetails --> [*]
+    ConfirmDonation --> ReturnToProjects
+    ReturnToProjects --> [*]
 ```
 
 5. Sección de donaciones:
@@ -112,9 +117,10 @@ stateDiagram-v2
     CreateNewDonation --> SelectProject
     SelectProject --> EnterDonationAmount
     EnterDonationAmount --> ConfirmDonation
-    ManageRecurringDonations --> PauseRecurringDonation
-    ManageRecurringDonations --> CancelRecurringDonation
-    DonationsSection --> [*]
+    ManageRecurringDonations --> UpdateDonationPreferences
+    ConfirmDonation --> ReturnToDonations
+    UpdateDonationPreferences --> ReturnToDonations
+    ReturnToDonations --> [*]
 ```
 
 ### Administrador
@@ -128,7 +134,8 @@ stateDiagram-v2
     state ValidateAdminCredentials <<choice>>
     ValidateAdminCredentials --> AdminDashboard : Credenciales correctas
     ValidateAdminCredentials --> EnterAdminCredentials : Credenciales incorrectas
-    AdminDashboard --> [*]
+    AdminDashboard --> RedirectToAdminDashboard
+    RedirectToAdminDashboard --> [*]
 ```
 
 2. Dashboard de administrador:
@@ -136,14 +143,16 @@ stateDiagram-v2
 ```mermaid
 stateDiagram-v2
     [*] --> AdminDashboard
-    state AdminDashboardChoice <<choice>>
-    AdminDashboard --> AdminDashboardChoice
-    AdminDashboardChoice --> UserManagement : Gestionar usuarios
-    AdminDashboardChoice --> ProviderManagement : Gestionar proveedores
-    AdminDashboardChoice --> ProjectManagement : Gestionar proyectos
-    AdminDashboardChoice --> DonationManagement : Gestionar donaciones
-    AdminDashboardChoice --> ReportGeneration : Generar reportes
-    AdminDashboard --> [*]
+    AdminDashboard --> UserManagement
+    AdminDashboard --> ProjectManagement
+    AdminDashboard --> DonationManagement
+    AdminDashboard --> ReportGeneration
+    UserManagement --> AdminDashboard
+    ProjectManagement --> AdminDashboard
+    DonationManagement --> AdminDashboard
+    ReportGeneration --> AdminDashboard
+    AdminDashboard --> AdminLogout
+    AdminLogout --> [*]
 ```
 
 3. Gestión de usuarios:
@@ -158,25 +167,13 @@ stateDiagram-v2
     CreateUser --> SaveNewUser
     EditUser --> SaveUserChanges
     DeleteUser --> ConfirmUserDeletion
-    UserManagement --> [*]
+    SaveNewUser --> ReturnToUserManagement
+    SaveUserChanges --> ReturnToUserManagement
+    ConfirmUserDeletion --> ReturnToUserManagement
+    ReturnToUserManagement --> [*]
 ```
 
-4. Gestión de proveedores:
-
-```mermaid
-stateDiagram-v2
-    [*] --> ProviderManagement
-    ProviderManagement --> ListProviders
-    ProviderManagement --> CreateProvider
-    ProviderManagement --> EditProvider
-    ProviderManagement --> DeleteProvider
-    CreateProvider --> SaveNewProvider
-    EditProvider --> SaveProviderChanges
-    DeleteProvider --> ConfirmProviderDeletion
-    ProviderManagement --> [*]
-```
-
-5. Gestión de proyectos:
+4. Gestión de proyectos:
 
 ```mermaid
 stateDiagram-v2
@@ -188,10 +185,13 @@ stateDiagram-v2
     CreateProject --> SaveNewProject
     EditProject --> SaveProjectChanges
     DeleteProject --> ConfirmProjectDeletion
-    ProjectManagement --> [*]
+    SaveNewProject --> ReturnToProjectManagement
+    SaveProjectChanges --> ReturnToProjectManagement
+    ConfirmProjectDeletion --> ReturnToProjectManagement
+    ReturnToProjectManagement --> [*]
 ```
 
-6. Gestión de donaciones:
+5. Gestión de donaciones:
 
 ```mermaid
 stateDiagram-v2
@@ -199,13 +199,13 @@ stateDiagram-v2
     DonationManagement --> ListDonations
     DonationManagement --> ViewDonationDetails
     DonationManagement --> UpdateDonationStatus
-    DonationManagement --> DeleteDonation
     UpdateDonationStatus --> SaveStatusChanges
-    DeleteDonation --> ConfirmDonationDeletion
-    DonationManagement --> [*]
+    ViewDonationDetails --> ReturnToDonationManagement
+    SaveStatusChanges --> ReturnToDonationManagement
+    ReturnToDonationManagement --> [*]
 ```
 
-7. Generación de reportes:
+6. Generación de reportes:
 
 ```mermaid
 stateDiagram-v2
@@ -216,5 +216,7 @@ stateDiagram-v2
     GenerateDonationReport --> DownloadReport
     GenerateProjectReport --> DownloadReport
     ViewStatistics --> ExportStatistics
-    ReportGeneration --> [*]
+    DownloadReport --> ReturnToReportGeneration
+    ExportStatistics --> ReturnToReportGeneration
+    ReturnToReportGeneration --> [*]
 ```

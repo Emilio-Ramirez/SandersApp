@@ -34,7 +34,6 @@ export default function DonacionTableHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
-
         {headLabel.map((headCell) => (
           <TableCell
             key={headCell.id}

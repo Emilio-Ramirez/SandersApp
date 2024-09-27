@@ -1,29 +1,35 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
-import Avatar from '@mui/material/Avatar';
+import Link from '@mui/material/Link';
 import Popover from '@mui/material/Popover';
+import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
+// Styled component for the clickable price
+const ClickablePrice = styled(Link)(({ theme }) => ({
+  cursor: 'pointer',
+  color: theme.palette.text.primary,
+  '&:hover': {
+    color: theme.palette.primary.main,
+    textDecoration: 'underline',
+  },
+}));
 
 export default function DonacionTableRow({
   selected,
-  name,
-  avatarUrl,
-  company,
-  role,
-  isVerified,
-  status,
+  cantidad,
+  email,
+  es_mensual,
+  fecha,
+  proyecto,
+  stripe_id,
   handleClick,
 }) {
   const [open, setOpen] = useState(null);
@@ -36,39 +42,31 @@ export default function DonacionTableRow({
     setOpen(null);
   };
 
+  const handlePriceClick = () => {
+    window.open(`https://dashboard.stripe.com/test/payments/${stripe_id}`, '_blank');
+  };
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={handleClick} />
         </TableCell>
-
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={name} src={avatarUrl} />
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
-
-        <TableCell>{company}</TableCell>
-
-        <TableCell>{role}</TableCell>
-
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
         <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
+          <ClickablePrice onClick={handlePriceClick}>
+            ${Number(cantidad).toFixed(2)}
+          </ClickablePrice>
         </TableCell>
-
+        <TableCell>{email}</TableCell>
+        <TableCell>{es_mensual ? 'Mensual' : 'Única'}</TableCell>
+        <TableCell>{new Date(fecha).toLocaleDateString()}</TableCell>
+        <TableCell>{proyecto ? proyecto.nombre : 'Sin asignar'}</TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
       </TableRow>
-
       <Popover
         open={!!open}
         anchorEl={open}
@@ -83,7 +81,6 @@ export default function DonacionTableRow({
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
-
         <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
@@ -94,12 +91,12 @@ export default function DonacionTableRow({
 }
 
 DonacionTableRow.propTypes = {
-  avatarUrl: PropTypes.any,
-  company: PropTypes.any,
-  handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
-  name: PropTypes.any,
-  role: PropTypes.any,
-  selected: PropTypes.any,
-  status: PropTypes.string,
+  cantidad: PropTypes.number.isRequired,
+  email: PropTypes.string.isRequired,
+  es_mensual: PropTypes.bool.isRequired,
+  fecha: PropTypes.string.isRequired,
+  proyecto: PropTypes.object,
+  stripe_id: PropTypes.string.isRequired,
+  selected: PropTypes.bool.isRequired,
+  handleClick: PropTypes.func.isRequired,
 };

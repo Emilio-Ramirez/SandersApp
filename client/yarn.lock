@@ -624,6 +624,18 @@
   resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.9.0.tgz"
   integrity sha512-bV63itrKBC0zdT27qYm6SDZHlkXwFL1xMBuhkn+X7l0+IIhNaH5wuuvZKp6eKhCD4KFhujhfhCT1YxXW6esUIA==
 
+"@stripe/react-stripe-js@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/@stripe/react-stripe-js/-/react-stripe-js-2.8.0.tgz"
+  integrity sha512-Vf1gNEuBxA9EtxiLghm2ZWmgbADNMJw4HW6eolUu0DON/6mZvWZgk0KHolN0sozNJwYp0i/8hBsDBcBUWcvnbw==
+  dependencies:
+    prop-types "^15.7.2"
+
+"@stripe/stripe-js@^1.44.1 || ^2.0.0 || ^3.0.0 || ^4.0.0", "@stripe/stripe-js@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/@stripe/stripe-js/-/stripe-js-4.5.0.tgz"
+  integrity sha512-dMOzc58AOlsF20nYM/avzV8RFhO/vgYTY7ajLMH6mjlnZysnOHZxsECQvjEmL8Q/ukPwHkOnxSPW/QGCCnp7XA==
+
 "@swc/core-darwin-arm64@1.3.92":
   version "1.3.92"
   resolved "https://registry.npmjs.org/@swc/core-darwin-arm64/-/core-darwin-arm64-1.3.92.tgz"
@@ -2821,7 +2833,7 @@ react-apexcharts@^1.4.1:
   dependencies:
     prop-types "^15.8.1"
 
-react-dom@^18.2.0:
+"react-dom@^16.6.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.0 || ^18.0.0", react-dom@^18.2.0, react-dom@>=16.6.0, react-dom@>=16.8, react-dom@>=16.8.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -2885,7 +2897,7 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@^18.2.0:
+"react@^16.6.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.0 || ^18.0.0", react@^18.2.0, react@>=0.13, react@>=16, react@>=16.6.0, react@>=16.8, react@>=16.8.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
