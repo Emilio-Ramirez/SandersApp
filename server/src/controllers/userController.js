@@ -3,6 +3,36 @@ const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
 const { createStripeCustomer, deleteStripeCustomer } = require('./stripeController');
 
+// Obtener todos los usuarios
+const getUsers = async (req, res) => {
+    try {
+        const users = await prisma.user.findMany({
+            include: {
+                donaciones: true,
+                suscripciones: true,
+            }
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Obtener un solo usuario por ID
+const getUserById = async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: parseInt(req.params.id, 10) },
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Get all users
 exports.getUsers = async (req, res) => {
   try {
@@ -33,18 +63,68 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// Crear un nuevo usuario
 exports.createUser = async (req, res) => {
-  let stripeCustomer = null;
-  try {
-    const { username, email, password, role } = req.body;
+    let stripeCustomer = null;
+    try {
+        const { username, email, password, role } = req.body;
 
-    // Validaciones existentes...
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        status: 'error',
-        code: 'MISSING_FIELDS',
-        message: 'Username, email, and password are required'
-      });
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                status: 'error',
+                code: 'MISSING_FIELDS',
+                message: 'Username, email, and password are required'
+            });
+        }
+
+        if (role && !['user', 'admin'].includes(role)) {
+            return res.status(400).json({
+                status: 'error',
+                code: 'INVALID_ROLE',
+                message: 'Invalid role. Must be either "user" or "admin"'
+            });
+        }
+
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [{ username: username }, { email: email }]
+            }
+        });
+
+        if (existingUser) {
+            return res.status(409).json({
+                status: 'error',
+                code: 'DUPLICATE',
+                message: 'Username or email already exists'
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await prisma.user.create({
+            data: {
+                username,
+                email,
+                password: hashedPassword,
+                role: role || 'user',
+            },
+        });
+
+        const userWithoutPassword = { ...newUser };
+        delete userWithoutPassword.password;
+
+        res.status(201).json({
+            status: 'success',
+            message: 'User created successfully',
+            user: userWithoutPassword
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: `Error creating user: ${error.message}`,
+            details: error
+        });
     }
 
     if (role && !['user', 'admin'].includes(role)) {
@@ -112,7 +192,8 @@ exports.createUser = async (req, res) => {
       user: userWithoutPassword
     });
 
-  } catch (error) {
+  } 
+  //catch (error) {
     // If a Stripe customer was created but there was an error afterwards, delete the Stripe customer
     if (stripeCustomer) {
       try {
@@ -125,8 +206,8 @@ exports.createUser = async (req, res) => {
           error: deleteError.message
         });
         return; // Add this to prevent further execution
-      }
     }
+}
 
     // Handle different types of errors
     if (error.code === 'P2002') {
@@ -142,8 +223,9 @@ exports.createUser = async (req, res) => {
       code: 'SERVER_ERROR',
       message: 'An unexpected error occurred while creating the user'
     });
-  }
-};// Change user role
+//};
+
+// Change user role
 exports.changeUserRole = async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
@@ -211,8 +293,8 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Change user role
-exports.changeUserRole = async (req, res) => {
+// Cambiar el rol de un usuario
+const changeUserRole = async (req, res) => {
     try {
         const { id } = req.params;
         const { role } = req.body;
@@ -244,6 +326,8 @@ exports.changeUserRole = async (req, res) => {
         });
     }
 };
+
+
 /*model User {
   id           Int           @id @default(autoincrement())
   username     String        @unique
@@ -253,129 +337,3 @@ exports.changeUserRole = async (req, res) => {
   logs         Log[]
 }
 */
-  
-      
-        
-        
-        
-    
-    
-      
-        
-        
-      
-    
-    
-      
-    
-    
-        
-          
-          
-          
-      
-    
-      
-    
-    
-      
-    
-    
-    
-    
-      
-      
-  
-  
-  
-      
-      
-      
-        
-          
-          
-        
-        
-      
-      
-  
-  
-  
-    
-      
-        
-        
-        
-      
-      
-        
-          
-          
-          
-        
-      
-    
-      
-        
-        
-        
-      
-      
-        
-        
-        
-      
-      
-          
-            
-            
-            
-          
-      
-      
-      
-      
-    
-          
-            
-            
-            
-            
-          
-        
-      
-      
-        
-          
-          
-          
-          
-          
-          
-      
-        
-            
-          
-          
-          
-          
-            
-            
-        
-            
-        
-        
-        
-        
-          
-          
-          
-          
-        
-        
-      
-        
-        
-        
-          
-      

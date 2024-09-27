@@ -23,6 +23,7 @@ model User {
   suscripciones    Suscripcion[]
 }
 
+
 model Proveedor {
   id                  Int        @id @default(autoincrement())
   nombre              String
