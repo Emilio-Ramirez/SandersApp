@@ -4,7 +4,7 @@ const { createUser, getUsers, getUserById, updateUser, deleteUser, changeUserRol
 
 // Definir las rutas y asegurarse de que las funciones no estén undefined
 router.post('/users', createUser);
-router.get('/users', getUsers);
+router.get('/', getUsers);
 router.get('/users/:id', getUserById);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
