@@ -13,14 +13,15 @@ enum Role {
 }
 
 model User {
-  id            Int           @id @default(autoincrement())
-  username      String        @unique
-  email         String        @unique
-  password      String
-  donaciones    Donacion[]
-  suscripciones Suscripcion[]
-  role          Role          @default(user)
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  email      String   @unique
+  password   String
+  role       String   @default("user")
+  donaciones Donacion[]  // Relación con las donaciones
+  suscripciones Suscripcion[]  // Relación con las suscripciones
 }
+
 
 model Proveedor {
   id                  Int        @id @default(autoincrement())

@@ -1,8 +1,8 @@
 const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
 
-// Get all users
-exports.getUsers = async (req, res) => {
+// Obtener todos los usuarios
+const getUsers = async (req, res) => {
     try {
         const users = await prisma.user.findMany({
             include: {
@@ -16,8 +16,8 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-// Get a single user by ID
-exports.getUserById = async (req, res) => {
+// Obtener un solo usuario por ID
+const getUserById = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: parseInt(req.params.id, 10) },
@@ -31,8 +31,8 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// Create a new user
-exports.createUser = async (req, res) => {
+// Crear un nuevo usuario
+const createUser = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
 
@@ -77,7 +77,6 @@ exports.createUser = async (req, res) => {
             },
         });
 
-        // Excluir la contraseña del objeto devuelto
         const userWithoutPassword = { ...newUser };
         delete userWithoutPassword.password;
 
@@ -90,21 +89,21 @@ exports.createUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             status: 'error',
-            message: `Error creating user: ${error.message}`,  // Detallar el error
+            message: `Error creating user: ${error.message}`,
             details: error
         });
     }
 };
 
-// Update a user
-exports.updateUser = async (req, res) => {
+// Actualizar un usuario
+const updateUser = async (req, res) => {
     try {
         const { username, email } = req.body;
 
         const updatedUser = await prisma.user.update({
             where: { id: parseInt(req.params.id, 10) },
             data: {
-                username: username || undefined,  // Evitar que campos vacíos causen errores
+                username: username || undefined,
                 email: email || undefined,
             },
         });
@@ -114,8 +113,8 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-// Delete a user
-exports.deleteUser = async (req, res) => {
+// Eliminar un usuario
+const deleteUser = async (req, res) => {
     try {
         await prisma.user.delete({
             where: { id: parseInt(req.params.id, 10) },
@@ -126,8 +125,8 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-// Change user role
-exports.changeUserRole = async (req, res) => {
+// Cambiar el rol de un usuario
+const changeUserRole = async (req, res) => {
     try {
         const { id } = req.params;
         const { role } = req.body;
@@ -158,4 +157,13 @@ exports.changeUserRole = async (req, res) => {
             details: error.message
         });
     }
+};
+
+module.exports = {
+    getUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser,
+    changeUserRole
 };

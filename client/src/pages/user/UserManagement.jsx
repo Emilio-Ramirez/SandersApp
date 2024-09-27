@@ -6,25 +6,25 @@ const UserManagement = () => {
   const [newUser, setNewUser] = useState({ username: '', email: '', password: '', role: 'USER' });
   const [showNewUserForm, setShowNewUserForm] = useState(false);
 
-  // Fetch all users when component loads
+  // Obtener todos los usuarios cuando el componente se carga
   useEffect(() => {
     axios.get('/api/users')
       .then(response => setUsers(response.data))
       .catch(error => console.error('Error fetching users:', error));
   }, []);
 
-  // Handle showing the new user form
+  // Mostrar el formulario para nuevo usuario
   const handleNewUser = () => {
     setShowNewUserForm(true);
   };
 
-  // Submit new user to the backend
+  // Enviar los datos del nuevo usuario al backend
   const submitNewUser = () => {
     axios.post('/api/users', newUser)
       .then(response => {
         setUsers([...users, response.data]);
         setShowNewUserForm(false);
-        setNewUser({ username: '', email: '', password: '', role: 'USER' }); // Clear form
+        setNewUser({ username: '', email: '', password: '', role: 'USER' }); // Limpiar formulario
       })
       .catch(error => console.error('Error creating user:', error));
   };
@@ -33,10 +33,10 @@ const UserManagement = () => {
     <div>
       <h1>User Management</h1>
 
-      {/* Button to open the new user form */}
+      {/* Botón para abrir el formulario de nuevo usuario */}
       <button type="button" onClick={handleNewUser}>New User</button>
 
-      {/* New user form */}
+      {/* Formulario para crear nuevo usuario */}
       {showNewUserForm && (
         <div>
           <h3>Create New User</h3>
@@ -69,7 +69,7 @@ const UserManagement = () => {
         </div>
       )}
 
-      {/* List of users */}
+      {/* Lista de usuarios */}
       <ul>
         {users.map(user => (
           <li key={user.id}>
