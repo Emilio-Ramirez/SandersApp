@@ -7,6 +7,7 @@ const authMiddleware = require('./src/middleware/authMiddleware');
 const roleMiddleware = require('./src/middleware/roleMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -20,6 +21,10 @@ app.use('/api/auth', authRoutes);
 
 // Routes that require authentication and admin role
 app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
+
+
+// Routes for handling physical donations with authentication
+app.use('/api/donaciones-fisicas', authMiddleware, donacionFisicaRoutes);
 
 async function checkDatabaseConnection() {
   try {
