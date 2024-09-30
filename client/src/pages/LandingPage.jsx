@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { Box, Grid, Button, Container, Typography } from '@mui/material';
+import { Box, Grid, Button, Container,CardMedia, Typography  } from '@mui/material';
 
 const LandingPage = () => (
   <Container>
@@ -44,6 +44,35 @@ const LandingPage = () => (
         </Button>
       </Box>
     </Box>
+
+    <Grid container spacing={4} mt={4}>
+  {/* Primera imagen con título */}
+  <Grid item xs={120} sm={60}>
+    <Typography textAlign="center" variant="h2" component="h3" padding="30px" gutterBottom>
+      Dona por proyecto
+    </Typography>
+    <CardMedia
+      component="img"
+      image="/assets/images/covers/dash_7.jpg"  // Reemplaza con tu URL o ruta local
+      alt="Proyecto de Pozos de Agua"
+      sx={{ width: '100%', borderRadius: '8px' }}
+    />
+  </Grid>
+
+  {/* Segunda imagen con título */}
+  <Grid item xs={120} sm={60}>
+    <Typography textAlign="center" variant="h2" component="h3" padding="30px" gutterBottom>
+      Suscribete a un proyecto
+    </Typography>
+    <CardMedia
+      component="img"
+      image="/assets/images/covers/dash_1.jpg"  // Reemplaza con tu URL o ruta local
+      alt="Instalación de Sistemas de Filtrado"
+      sx={{ width: '100%', borderRadius: '8px' }}
+    />
+  </Grid>
+</Grid>
+
 
     <Box component="ul" sx={{ listStyleType: 'disc', pl: 4 }}>
       <Typography variant="h3" component="h3" color="black" textAlign="center" marginBottom="35px" gutterBottom>
