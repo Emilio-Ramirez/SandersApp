@@ -1,39 +1,8 @@
-// server/src/controllers/userController.js
 const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
 const { createStripeCustomer, deleteStripeCustomer } = require('./stripeController');
 
 // Obtener todos los usuarios
-const getUsers = async (req, res) => {
-    try {
-        const users = await prisma.user.findMany({
-            include: {
-                donaciones: true,
-                suscripciones: true,
-            }
-        });
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Obtener un solo usuario por ID
-const getUserById = async (req, res) => {
-    try {
-        const user = await prisma.user.findUnique({
-            where: { id: parseInt(req.params.id, 10) },
-        });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Get all users
 exports.getUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -48,11 +17,11 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Get a single user by ID
+// Obtener un solo usuario por ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(req.params.id) },
+      where: { id: parseInt(req.params.id, 10) },
     });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -65,66 +34,15 @@ exports.getUserById = async (req, res) => {
 
 // Crear un nuevo usuario
 exports.createUser = async (req, res) => {
-    let stripeCustomer = null;
-    try {
-        const { username, email, password, role } = req.body;
-
-        if (!username || !email || !password) {
-            return res.status(400).json({
-                status: 'error',
-                code: 'MISSING_FIELDS',
-                message: 'Username, email, and password are required'
-            });
-        }
-
-        if (role && !['user', 'admin'].includes(role)) {
-            return res.status(400).json({
-                status: 'error',
-                code: 'INVALID_ROLE',
-                message: 'Invalid role. Must be either "user" or "admin"'
-            });
-        }
-
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [{ username: username }, { email: email }]
-            }
-        });
-
-        if (existingUser) {
-            return res.status(409).json({
-                status: 'error',
-                code: 'DUPLICATE',
-                message: 'Username or email already exists'
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword,
-                role: role || 'user',
-            },
-        });
-
-        const userWithoutPassword = { ...newUser };
-        delete userWithoutPassword.password;
-
-        res.status(201).json({
-            status: 'success',
-            message: 'User created successfully',
-            user: userWithoutPassword
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: `Error creating user: ${error.message}`,
-            details: error
-        });
+  let stripeCustomer = null;
+  const { username, email, password, role } = req.body;
+  try {
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        status: 'error',
+        code: 'MISSING_FIELDS',
+        message: 'Username, email, and password are required'
+      });
     }
 
     if (role && !['user', 'admin'].includes(role)) {
@@ -137,38 +55,26 @@ exports.createUser = async (req, res) => {
 
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { username: username },
-          { email: email }
-        ]
+        OR: [{ username: username }, { email: email }]
       }
     });
 
     if (existingUser) {
-      if (existingUser.username === username) {
-        return res.status(409).json({
-          status: 'error',
-          code: 'USERNAME_EXISTS',
-          message: 'Username already in use'
-        });
-      } else {
-        return res.status(409).json({
-          status: 'error',
-          code: 'EMAIL_EXISTS',
-          message: 'Email already in use'
-        });
-      }
+      return res.status(409).json({
+        status: 'error',
+        code: 'DUPLICATE',
+        message: 'Username or email already exists'
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear el usuario primero
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
-        role: role || 'user'
+        role: role || 'user',
       },
     });
 
@@ -181,10 +87,8 @@ exports.createUser = async (req, res) => {
       data: { stripeCustomerId: stripeCustomer.id }
     });
 
-    // Eliminar la contraseña de la respuesta
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: __, ...userWithoutPassword } = updatedUser;
-
+    const userWithoutPassword = { ...updatedUser };
+    delete userWithoutPassword.password;
 
     res.status(201).json({
       status: 'success',
@@ -192,9 +96,7 @@ exports.createUser = async (req, res) => {
       user: userWithoutPassword
     });
 
-  } 
-  //catch (error) {
-    // If a Stripe customer was created but there was an error afterwards, delete the Stripe customer
+  } catch (error) {
     if (stripeCustomer) {
       try {
         await deleteStripeCustomer(stripeCustomer.id);
@@ -205,11 +107,10 @@ exports.createUser = async (req, res) => {
           message: 'An error occurred while deleting the Stripe customer',
           error: deleteError.message
         });
-        return; // Add this to prevent further execution
+        return;
+      }
     }
-}
 
-    // Handle different types of errors
     if (error.code === 'P2002') {
       return res.status(409).json({
         status: 'error',
@@ -223,15 +124,16 @@ exports.createUser = async (req, res) => {
       code: 'SERVER_ERROR',
       message: 'An unexpected error occurred while creating the user'
     });
-//};
+  }
+};
 
-// Change user role
+// Cambiar el rol de un usuario
 exports.changeUserRole = async (req, res) => {
   try {
     const userId = parseInt(req.params.id);
     const { role } = req.body;
 
-    // Validate role
+    // Validar el rol
     if (!['user', 'admin'].includes(role)) {
       return res.status(400).json({
         status: 'error',
@@ -267,7 +169,7 @@ exports.changeUserRole = async (req, res) => {
   }
 };
 
-// Update a user
+// Actualizar un usuario
 exports.updateUser = async (req, res) => {
   try {
     const { username, email } = req.body;
@@ -281,7 +183,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Delete a user
+// Eliminar un usuario
 exports.deleteUser = async (req, res) => {
   try {
     await prisma.user.delete({
@@ -292,48 +194,3 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
-// Cambiar el rol de un usuario
-const changeUserRole = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { role } = req.body;
-
-        if (!['user', 'admin'].includes(role)) {
-            return res.status(400).json({
-                status: 'error',
-                code: 'INVALID_ROLE',
-                message: 'Invalid role. Must be either "user" or "admin"'
-            });
-        }
-
-        const updatedUser = await prisma.user.update({
-            where: { id: parseInt(id, 10) },
-            data: { role },
-        });
-
-        res.json({
-            status: 'success',
-            message: 'User role updated successfully',
-            user: updatedUser
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: 'Error updating role',
-            details: error.message
-        });
-    }
-};
-
-
-/*model User {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique
-  email        String        @unique
-  donaciones   Donacion[]
-  suscripciones Suscripcion[]
-  logs         Log[]
-}
-*/
