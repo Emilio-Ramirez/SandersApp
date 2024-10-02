@@ -3,8 +3,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { AppView } from 'src/sections/overview/view';
 
-import PhysicalDonations from '../components/donations/PhysicalDonations';
-
+import PhysicalDonations from '../../components/donations/PhysicalDonations';
 
 export default function DashboardPage() {
   return (
@@ -12,7 +11,6 @@ export default function DashboardPage() {
       <Helmet>
         <title> Dashboard </title>
       </Helmet>
-
       <AppView />
       <PhysicalDonations />
     </>
