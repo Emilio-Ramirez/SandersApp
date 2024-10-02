@@ -123,3 +123,21 @@ exports.getUserPaymentMethods = async (userId) => {
     throw new Error(`Failed to retrieve user payment methods: ${error.message}`);
   }
 };
+
+exports.deletePaymentMethod = async (userId, paymentMethodId) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID');
+    }
+
+    // Detach the payment method from the customer
+    await stripe.paymentMethods.detach(paymentMethodId);
+
+    return { message: 'Payment method deleted successfully' };
+  } catch (error) {
+    throw new Error(`Failed to delete payment method: ${error.message}`);
+  }
+};

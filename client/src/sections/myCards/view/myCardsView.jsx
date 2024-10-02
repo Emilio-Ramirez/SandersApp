@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { cards } from 'src/_mock/cards';
+import api from 'src/utils/api';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -28,11 +28,31 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 export default function MyCardsPage() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [cards, setCards] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        const response = await api.get('/api/stripe/payment-methods');
+        const formattedCards = response.data.map(card => ({
+          id: card.id,
+          name: card.billing_details.name || 'Unnamed Card',
+          cardNumber: `**** **** **** ${card.card.last4}`,
+          expiryDate: `${card.card.exp_month.toString().padStart(2, '0')}/${card.card.exp_year.toString().slice(-2)}`,
+        }));
+        setCards(formattedCards);
+      } catch (error) {
+        console.error('Error fetching payment methods:', error);
+        // Handle error (e.g., show an error message to the user)
+      }
+    };
+
+    fetchCards();
+  }, []);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -40,33 +60,6 @@ export default function MyCardsPage() {
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(id);
     }
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = cards.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -83,6 +76,10 @@ export default function MyCardsPage() {
     setFilterName(event.target.value);
   };
 
+  const handleDeleteSuccess = (deletedCardId) => {
+    setCards(prevCards => prevCards.filter(card => card.id !== deletedCardId));
+  };
+
   const dataFiltered = applyFilter({
     inputData: cards,
     comparator: getComparator(order, orderBy),
@@ -91,7 +88,7 @@ export default function MyCardsPage() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  return (
+return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Mis Tarjetas</Typography>
@@ -107,7 +104,6 @@ export default function MyCardsPage() {
 
       <Card>
         <CardTableToolbar
-          numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
@@ -119,16 +115,12 @@ export default function MyCardsPage() {
                 order={order}
                 orderBy={orderBy}
                 rowCount={cards.length}
-                numSelected={selected.length}
                 onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
                   { id: 'name', label: 'Name' },
                   { id: 'cardNumber', label: 'Card Number' },
                   { id: 'expiryDate', label: 'Expiry Date' },
-                  { id: 'isDefault', label: 'Default', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: '', label: 'Actions', align: 'right' },
                 ]}
               />
               <TableBody>
@@ -137,13 +129,11 @@ export default function MyCardsPage() {
                   .map((row) => (
                     <CardTableRow
                       key={row.id}
+                      id ={row.id}
                       name={row.name}
                       cardNumber={row.cardNumber}
                       expiryDate={row.expiryDate}
-                      isDefault={row.isDefault}
-                      status={row.status}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      onDeleteSuccess={handleDeleteSuccess}
                     />
                   ))}
 

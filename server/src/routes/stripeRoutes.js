@@ -31,7 +31,7 @@ router.use(authMiddleware);
 router.post('/add-payment-method', async (req, res) => {
   try {
     const { paymentMethodId } = req.body;
-    const userId = req.userId; 
+    const userId = req.userId;
     const paymentMethod = await stripeController.addPaymentMethod(userId, paymentMethodId);
     res.json(paymentMethod);
   } catch (error) {
@@ -45,6 +45,17 @@ router.get('/payment-methods', async (req, res) => {
     const userId = req.userId; // Using userId from authMiddleware
     const paymentMethods = await stripeController.getUserPaymentMethods(userId);
     res.json(paymentMethods);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/payment-methods/:paymentMethodId', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { paymentMethodId } = req.params;
+    await stripeController.deletePaymentMethod(userId, paymentMethodId);
+    res.json({ message: 'Payment method deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
