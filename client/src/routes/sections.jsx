@@ -17,6 +17,7 @@ export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
 export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
 export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
 export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDescription'));
+export const AdminDonacionFisicaPage = lazy(() => import('src/pages/admin/donacionFisica')); // Donación Física Admin
 
 // User Pages
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
@@ -62,6 +63,7 @@ export default function Router() {
         { path: 'new-project', element: <AdminAddProjectPage /> },
         { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
         { path: 'donacion', element: <AdminDonacionPage /> },
+        { path: 'donacion-fisica', element: <AdminDonacionFisicaPage /> }, // Add Donación Física Admin Route
       ],
     },
     {

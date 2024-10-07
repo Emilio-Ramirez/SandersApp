@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { createPhysicalDonation } from '../../services/donationService';
+import { createPhysicalDonation } from '../../services/donationService'; 
 
-const PhysicalDonations = () => {
+const DonacionFisica = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
@@ -11,15 +11,21 @@ const PhysicalDonations = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { cantidad: amount, fecha: date, descripcion: description, proyectoId };
-    const response = await createPhysicalDonation(data);
-    console.log(response);
+    try {
+      const response = await createPhysicalDonation(data);
+      console.log(response);
+      alert('Donación física creada con éxito');
+    } catch (error) {
+      console.error('Error al crear la donación física:', error);
+      alert('Hubo un error al crear la donación.');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="amount">
-          Amount:
+          Cantidad:
           <input
             id="amount"
             name="amount"
@@ -31,7 +37,7 @@ const PhysicalDonations = () => {
       </div>
       <div>
         <label htmlFor="date">
-          Date:
+          Fecha:
           <input
             id="date"
             name="date"
@@ -43,7 +49,7 @@ const PhysicalDonations = () => {
       </div>
       <div>
         <label htmlFor="description">
-          Description:
+          Descripción:
           <input
             id="description"
             name="description"
@@ -55,7 +61,7 @@ const PhysicalDonations = () => {
       </div>
       <div>
         <label htmlFor="proyectoId">
-          Project ID (optional):
+          ID del Proyecto (opcional):
           <input
             id="proyectoId"
             name="proyectoId"
@@ -65,9 +71,9 @@ const PhysicalDonations = () => {
           />
         </label>
       </div>
-      <button type="submit">Submit Donation</button>
+      <button type="submit">Enviar Donación Física</button>
     </form>
   );
 };
 
-export default PhysicalDonations;
+export default DonacionFisica;

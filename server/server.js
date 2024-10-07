@@ -10,6 +10,8 @@ const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
+const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
+
 
 const app = express();
 const prisma = new PrismaClient();
