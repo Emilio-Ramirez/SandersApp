@@ -10,6 +10,8 @@ const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
+const fs = require('fs');
+const https = require ('https');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -51,10 +53,17 @@ async function checkDatabaseConnection() {
 // Start the server
 const PORT = process.env.PORT || 4000;
 
+// Read Certificates
+const privateKey = fs.readFileSync('./certs/server.key', 'utf8');
+const certificate = fs.readFileSync('./certs/server.crt', 'utf8');
+const ca = fs.readFileSync('./certs/ca.crt', 'utf8');
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+const httpsServer = https.createServer(credentials, app);
+
 async function startServer() {
   const connected = await checkDatabaseConnection();
   if (connected) {
-    app.listen(PORT, () => {
+    httpsServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } else {
