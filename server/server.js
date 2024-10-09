@@ -39,6 +39,10 @@ app.get('/api/verify-stripe', async (req, res) => {
   }
 });
 
+
+// Routes for handling physical donations with authentication
+app.use('/api/donaciones-fisicas', authMiddleware, donacionFisicaRoutes);
+
 async function checkDatabaseConnection() {
   try {
     await prisma.$connect();
