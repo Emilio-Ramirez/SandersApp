@@ -11,11 +11,13 @@ const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
 const fs = require('fs');
-const https = require ('https');
+const https = require('https');
 
 const app = express();
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 
 // Middleware
 app.use(cors());
