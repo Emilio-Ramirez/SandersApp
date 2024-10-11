@@ -22,7 +22,6 @@ exports.deleteStripeCustomer = async (stripeCustomerId) => {
   try {
     await stripe.customers.del(stripeCustomerId);
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('Error deleting Stripe customer:', error);
     throw new Error(`Failed to delete Stripe customer: ${error.message}`);
   }
@@ -79,5 +78,66 @@ exports.recordSuccessfulDonation = async (paymentIntentId, email) => {
     return donation;
   } catch (error) {
     throw new Error(`Failed to record successful donation: ${error.message}`);
+  }
+};
+
+
+exports.addPaymentMethod = async (userId, paymentMethodId) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID');
+    }
+
+    // Attach the payment method to the customer
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: user.stripeCustomerId });
+
+    // Set it as the default payment method
+    await stripe.customers.update(user.stripeCustomerId, {
+      invoice_settings: { default_payment_method: paymentMethodId },
+    });
+
+    return { message: 'Payment method added successfully' };
+  } catch (error) {
+    throw new Error(`Failed to add payment method: ${error.message}`);
+  }
+};
+
+exports.getUserPaymentMethods = async (userId) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID');
+    }
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: user.stripeCustomerId,
+      type: 'card',
+    });
+    return paymentMethods.data;
+  } catch (error) {
+    throw new Error(`Failed to retrieve user payment methods: ${error.message}`);
+  }
+};
+
+exports.deletePaymentMethod = async (userId, paymentMethodId) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID');
+    }
+
+    // Detach the payment method from the customer
+    await stripe.paymentMethods.detach(paymentMethodId);
+
+    return { message: 'Payment method deleted successfully' };
+  } catch (error) {
+    throw new Error(`Failed to delete payment method: ${error.message}`);
   }
 };
