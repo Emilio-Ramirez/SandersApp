@@ -30,6 +30,7 @@ app.use('/api/stripe', stripeRoutes);
 // Routes that require authentication and admin role
 app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
 app.use('/api/admin/donaciones', authMiddleware, roleMiddleware(['admin']), donacionRoutes);
+app.use('/api/proyectos', authMiddleware, roleMiddleware(['admin', 'user']), stripeRoutes);
 
 app.get('/api/verify-stripe', async (req, res) => {
   try {
