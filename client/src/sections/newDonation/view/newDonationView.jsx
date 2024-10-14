@@ -64,7 +64,7 @@ function DonacionPageContent() {
 
     try {
       const return_url = `${window.location.origin}/donation-result`;
-      const response = await api.post('https://localhost:4000/api/stripe/process-user-donation', {
+      const response = await api.post('api/stripe/process-user-donation', {
         projectId: parseInt(selectedProject, 10),
         amount: Math.round(parseFloat(donationAmount) * 100), // Convert to cents
         currency: 'mxn',
