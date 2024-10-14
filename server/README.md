@@ -40,6 +40,12 @@ This is the backend server for the Sanders App project.
 
     ```
 
+5. Fill the db with seeds
+
+```
+  npm run seed 
+```
+
 ## Development
 
 To start the development server:

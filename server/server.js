@@ -10,6 +10,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
+const proyectoRoutes = require('./src/routes/proyectoRoutes');
 const fs = require('fs');
 const https = require('https');
 
@@ -30,7 +31,7 @@ app.use('/api/stripe', stripeRoutes);
 // Routes that require authentication and admin role
 app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
 app.use('/api/admin/donaciones', authMiddleware, roleMiddleware(['admin']), donacionRoutes);
-app.use('/api/proyectos', authMiddleware, roleMiddleware(['admin', 'user']), stripeRoutes);
+app.use('/api/proyectos', authMiddleware, roleMiddleware(['admin', 'user']), proyectoRoutes);
 
 app.get('/api/verify-stripe', async (req, res) => {
   try {

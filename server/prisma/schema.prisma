@@ -31,23 +31,22 @@ model Proveedor {
   telefono            String
   email               String
   producto_especifico String
-  proyectos           Proyecto[]
 }
 
 model Proyecto {
   id                  Int              @id @default(autoincrement())
   nombre              String
   descripcion         String
-  proveedorId         Int
   costo_total         Decimal
+  suma_recaudada      Decimal
   fecha_inicio        DateTime
   fecha_fin           DateTime
   link_ubicacion      String
   estado_trazabilidad Json
+  stripeIdProducto    String?          
   donaciones          Donacion[]
   donacionesFisicas   DonacionFisica[]
   estadisticas        Estadistica[]
-  proveedor           Proveedor        @relation(fields: [proveedorId], references: [id])
 }
 
 model Donacion {
