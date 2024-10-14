@@ -61,7 +61,6 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
       select: { id: true, stripeIdProducto: true }
     });
 
-    console.log('Project found:', project);
 
     if (!project) {
       throw new Error(`Project with ID ${projectId} not found`);
@@ -371,5 +370,37 @@ exports.updateSubscription = async (userId, subscriptionId, newAmount) => {
     return updatedSubscription;
   } catch (error) {
     throw new Error(`Failed to update subscription: ${error.message}`);
+  }
+};
+
+exports.getUserDonations = async (userId) => {
+  try {
+    const donations = await prisma.donacion.findMany({
+      where: { usuarioId: userId },
+      include: {
+        proyecto: {
+          select: {
+            nombre: true,
+            descripcion: true,
+          },
+        },
+      },
+      orderBy: {
+        fecha: 'desc',
+      },
+    });
+
+    return donations.map(donation => ({
+      id: donation.id,
+      amount: donation.cantidad,
+      date: donation.fecha,
+      projectName: donation.proyecto.nombre,
+      projectDescription: donation.proyecto.descripcion,
+      isMonthly: donation.es_mensual,
+      stripeId: donation.stripe_id,
+    }));
+  } catch (error) {
+    console.error('Error fetching user donations:', error);
+    throw new Error(`Failed to fetch user donations: ${error.message}`);
   }
 };

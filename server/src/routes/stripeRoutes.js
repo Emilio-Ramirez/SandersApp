@@ -132,4 +132,13 @@ router.get('/subscriptions', async (req, res) => {
   }
 });
 
+router.get('/user-donations', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const donations = await stripeController.getUserDonations(userId);
+    res.json(donations);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;
