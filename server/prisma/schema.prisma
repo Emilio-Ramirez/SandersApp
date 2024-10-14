@@ -17,15 +17,14 @@ model User {
   username         String        @unique
   email            String        @unique
   password         String
-  role             Role          @default(user)  
+  role             Role          @default(user)
   stripeCustomerId String?
   donaciones       Donacion[]
   suscripciones    Suscripcion[]
 }
 
-
 model Proveedor {
-  id                  Int        @id @default(autoincrement())
+  id                  Int    @id @default(autoincrement())
   nombre              String
   contacto            String
   telefono            String
@@ -43,15 +42,16 @@ model Proyecto {
   fecha_fin           DateTime
   link_ubicacion      String
   estado_trazabilidad Json
-  stripeIdProducto    String?          
+  stripeIdProducto    String?
   donaciones          Donacion[]
   donacionesFisicas   DonacionFisica[]
   estadisticas        Estadistica[]
+  suscripciones       Suscripcion[]
 }
 
 model Donacion {
   id         Int       @id @default(autoincrement())
-  usuarioId  Int?   
+  usuarioId  Int?
   proyectoId Int?
   cantidad   Decimal
   fecha      DateTime
@@ -61,6 +61,7 @@ model Donacion {
   proyecto   Proyecto? @relation(fields: [proyectoId], references: [id])
   usuario    User?     @relation(fields: [usuarioId], references: [id])
 }
+
 model DonacionFisica {
   id          Int       @id @default(autoincrement())
   proyectoId  Int?
@@ -73,11 +74,14 @@ model DonacionFisica {
 model Suscripcion {
   id                     Int      @id @default(autoincrement())
   usuarioId              Int
+  proyectoId             Int
   stripe_subscription_id String
   estado                 String
   fecha_inicio           DateTime
   fecha_fin              DateTime
+  cantidad               Decimal
   usuario                User     @relation(fields: [usuarioId], references: [id])
+  proyecto               Proyecto @relation(fields: [proyectoId], references: [id])
 }
 
 model Estadistica {

@@ -83,44 +83,40 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
       const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomerId,
         items: [{ price: price.id }],
+        default_payment_method: paymentMethodId, // Use the provided paymentMethodId
         payment_behavior: 'default_incomplete',
-        payment_settings: {
-          payment_method_types: ['card'],
-          save_default_payment_method: 'on_subscription'
-        },
         expand: ['latest_invoice.payment_intent'],
         metadata: {
           projectId: projectId.toString(),
         },
       });
 
-      // Attach the payment method to the customer if it's not already
-      await stripe.paymentMethods.attach(paymentMethodId, {
-        customer: user.stripeCustomerId,
-      });
+      // Confirm the payment intent associated with the subscription
+      const paymentIntent = subscription.latest_invoice.payment_intent;
+      if (paymentIntent.status === 'requires_confirmation') {
+        await stripe.paymentIntents.confirm(paymentIntent.id);
+      }
 
-      // Set the newly attached payment method as the default for the customer
-      await stripe.customers.update(user.stripeCustomerId, {
-        invoice_settings: { default_payment_method: paymentMethodId },
-      });
+      // Refresh the subscription to get the updated status
+      const updatedSubscription = await stripe.subscriptions.retrieve(subscription.id);
 
       // Save subscription details to your database
       await prisma.suscripcion.create({
         data: {
           usuario: { connect: { id: userId } },
-          stripe_subscription_id: subscription.id,
-          estado: subscription.status,
-          fecha_inicio: new Date(subscription.current_period_start * 1000),
-          fecha_fin: new Date(subscription.current_period_end * 1000),
           proyecto: { connect: { id: projectId } },
+          stripe_subscription_id: updatedSubscription.id,
+          estado: updatedSubscription.status,
+          fecha_inicio: new Date(updatedSubscription.current_period_start * 1000),
+          fecha_fin: new Date(updatedSubscription.current_period_end * 1000),
           cantidad: amount / 100 // Convert cents to dollars/pesos
         }
       });
 
       return {
-        subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-        status: subscription.status
+        subscriptionId: updatedSubscription.id,
+        clientSecret: paymentIntent.client_secret,
+        status: updatedSubscription.status
       };
     } else {
       // Handle one-time donation
