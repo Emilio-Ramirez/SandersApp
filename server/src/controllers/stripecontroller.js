@@ -112,6 +112,17 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         }
       });
 
+      await prisma.donacion.create({
+        data: {
+          usuario: { connect: { id: userId } },
+          proyecto: { connect: { id: projectId } },
+          cantidad: amount / 100, // Convert cents to dollars/pesos
+          fecha: new Date(),
+          stripe_id: updatedSubscription.id, // Use subscription ID instead of payment intent ID
+          es_mensual: true
+        }
+      });
+
       return {
         subscriptionId: updatedSubscription.id,
         clientSecret: paymentIntent.client_secret,
