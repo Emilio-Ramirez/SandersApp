@@ -64,11 +64,11 @@ function DonacionPageContent() {
 
     try {
       const return_url = `${window.location.origin}/donation-result`;
-      const response = await api.post('/api/stripe/process-user-donation', {
-        proyectoId: parseInt(selectedProject, 10), // Added radix parameter
+      const response = await api.post('https://localhost:4000/api/stripe/process-user-donation', {
+        projectId: parseInt(selectedProject, 10),
         amount: Math.round(parseFloat(donationAmount) * 100), // Convert to cents
         currency: 'mxn',
-        isMensual, // Using property shorthand
+        isMensual,
         paymentMethodId: selectedCard,
         return_url,
       });
@@ -110,7 +110,7 @@ function DonacionPageContent() {
 
   const handleCloseSuccessDialog = () => {
     setOpenSuccessDialog(false);
-    navigate('/'); // or wherever you want to redirect after successful donation
+    navigate('/user/donacion'); // or wherever you want to redirect after successful donation
   };
 
   return (
