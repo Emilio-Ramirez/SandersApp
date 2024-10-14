@@ -12,6 +12,7 @@ const donacionRoutes = require('./src/routes/donacionRoutes');
 const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
 const proyectoRoutes = require('./src/routes/proyectoRoutes');
+const suscripcionesRoutes = require('./src/routes/suscripcionRoutes');
 const fs = require('fs');
 const https = require('https');
 
@@ -28,6 +29,7 @@ app.use(express.json());
 // Routes that don't require authentication
 app.use('/api/auth', authRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/suscripciones', suscripcionesRoutes);
 
 // Routes that require authentication and admin role
 app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);

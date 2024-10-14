@@ -415,3 +415,37 @@ exports.getUserDonations = async (userId) => {
     throw new Error(`Failed to fetch user donations: ${error.message}`);
   }
 };
+
+
+exports.cancelSubscription = async (userId, subscriptionId) => {
+  try {
+    // First, verify that the subscription belongs to the user
+    const subscription = await prisma.suscripcion.findFirst({
+      where: {
+        id: parseInt(subscriptionId),
+        usuarioId: userId
+      }
+    });
+
+    if (!subscription) {
+      throw new Error('Subscription not found or does not belong to the user');
+    }
+
+    // Cancel the subscription in Stripe
+    const cancelledSubscription = await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+
+    // Update the subscription status in your database
+    await prisma.suscripcion.update({
+      where: { id: parseInt(subscriptionId) },
+      data: {
+        estado: cancelledSubscription.status,
+        fecha_fin: new Date(cancelledSubscription.canceled_at * 1000)
+      }
+    });
+
+    return { message: 'Subscription cancelled successfully', status: cancelledSubscription.status };
+  } catch (error) {
+    console.error('Error cancelling subscription:', error);
+    throw new Error(`Failed to cancel subscription: ${error.message}`);
+  }
+};
