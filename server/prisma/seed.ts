@@ -36,16 +36,8 @@ async function main() {
       data: {
         nombre: POST_TITLES[i],
         descripcion: faker.lorem.paragraph(),
-        proveedor: {
-          create: {
-            nombre: faker.company.name(),
-            contacto: faker.person.fullName(),
-            telefono: faker.phone.number(),
-            email: faker.internet.email(),
-            producto_especifico: faker.commerce.product(),
-          },
-        },
-        costo_total: new Prisma.Decimal(parseFloat(faker.commerce.price({ min: 1000, max: 10000, dec: 2, symbol: '$' } ))), 
+        costo_total: new Prisma.Decimal(faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 })),
+        suma_recaudada: new Prisma.Decimal(0),
         fecha_inicio: faker.date.past(),
         fecha_fin: faker.date.future(),
         link_ubicacion: faker.internet.url(),
@@ -59,7 +51,7 @@ async function main() {
         estadisticas: {
           create: {
             personas_ayudadas: faker.number.int(5000),
-            agua_proporcionada: new Prisma.Decimal(faker.number.float({ min: 1000, max: 10000 })),
+            agua_proporcionada: new Prisma.Decimal(faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 })),
             fecha: faker.date.past(),
           },
         },
@@ -69,6 +61,10 @@ async function main() {
 }
 
 main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(async () => {
     await prisma.$disconnect();
   });
