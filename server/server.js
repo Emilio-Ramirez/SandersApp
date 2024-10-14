@@ -18,7 +18,7 @@ const app = express();
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
+// const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 
 // Middleware
 app.use(cors());
