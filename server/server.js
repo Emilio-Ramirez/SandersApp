@@ -9,6 +9,7 @@ const roleMiddleware = require('./src/middleware/roleMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
+const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
 const fs = require('fs');
 const https = require('https');

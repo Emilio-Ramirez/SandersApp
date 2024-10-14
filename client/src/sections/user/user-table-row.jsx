@@ -11,7 +11,7 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
+// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -21,10 +21,9 @@ export default function UserTableRow({
   name,
   avatarUrl,
   role,
-  isVerified,
-  status,
   handleClick,
-  email, // Add this prop
+  email,
+  onDelete, // Recibir la función de eliminar por props
 }) {
   const [open, setOpen] = useState(null);
 
@@ -34,6 +33,11 @@ export default function UserTableRow({
 
   const handleCloseMenu = () => {
     setOpen(null);
+  };
+
+  const handleDelete = () => {
+    onDelete(); // Llamar a la función de eliminación desde props
+    handleCloseMenu(); // Cerrar el menú después de eliminar
   };
 
   return (
@@ -55,12 +59,6 @@ export default function UserTableRow({
         <TableCell>{email}</TableCell>
 
         <TableCell>{role}</TableCell>
-
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
-
-        <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>{status}</Label>
-        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -84,7 +82,7 @@ export default function UserTableRow({
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -96,10 +94,9 @@ export default function UserTableRow({
 UserTableRow.propTypes = {
   avatarUrl: PropTypes.any,
   handleClick: PropTypes.func,
-  isVerified: PropTypes.any,
   name: PropTypes.any,
   role: PropTypes.any,
   selected: PropTypes.any,
-  status: PropTypes.string,
   email: PropTypes.string,
+  onDelete: PropTypes.func, // Definir el tipo de la nueva prop onDelete
 };
