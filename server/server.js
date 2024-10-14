@@ -30,7 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/stripe', stripeRoutes);
 
 // Routes that require authentication and admin role
-app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
+app.use('/api/admin/users',  userRoutes);
 app.use('/api/admin/donaciones', authMiddleware, roleMiddleware(['admin']), donacionRoutes);
 app.use('/api/proyectos', authMiddleware, roleMiddleware(['admin', 'user']), proyectoRoutes);
 
