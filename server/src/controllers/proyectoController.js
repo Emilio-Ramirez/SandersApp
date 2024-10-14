@@ -1,6 +1,7 @@
 // server/src/controllers/proyectoController.js
 const { prisma } = require('../config/database');
 
+// proyectos
 exports.getProyectos = async (req, res) => {
   try {
     const proyectos = await prisma.proyecto.findMany({
@@ -20,6 +21,7 @@ exports.getProyectos = async (req, res) => {
   }
 };
 
+// proyectos por ID
 exports.getProyectoById = async (req, res) => {
   try {
     const proyecto = await prisma.proyecto.findUnique({
@@ -46,6 +48,7 @@ exports.getProyectoById = async (req, res) => {
   }
 };
 
+// crear proyecto
 exports.createProyecto = async (req, res) => {
   try {
     const {
@@ -84,6 +87,7 @@ exports.createProyecto = async (req, res) => {
   }
 };
 
+// actualizar proyecto
 exports.updateProyecto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -124,6 +128,7 @@ exports.updateProyecto = async (req, res) => {
   }
 };
 
+// eliminar proyecto
 exports.deleteProyecto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -142,3 +147,4 @@ exports.deleteProyecto = async (req, res) => {
     });
   }
 };
+ 

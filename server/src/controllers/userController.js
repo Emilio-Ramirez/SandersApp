@@ -17,7 +17,7 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Obtener un solo usuario por ID
+// Obtener un solo usuario por ID 
 exports.getUserById = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
