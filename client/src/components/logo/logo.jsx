@@ -6,8 +6,6 @@ import Link from '@mui/material/Link';
 
 import { RouterLink } from 'src/routes/components';
 
-// ----------------------------------------------------------------------
-
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   const logo = (
     <Box
@@ -16,8 +14,8 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       src="/assets/images/logo.png"  
       alt="Logo"
       sx={{
-        width: 100,    // Adjust width as needed
-        height: 100,   // Adjust height as needed
+        width: 100,    // Ajusta el tamaño según sea necesario
+        height: 100,   // Ajusta el tamaño según sea necesario
         display: 'inline-flex',
         cursor: 'pointer',
         ...sx,
@@ -31,7 +29,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   }
 
   return (
-    <Link component={RouterLink} href="/user" sx={{ display: 'contents' }}>
+    <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
       {logo}
     </Link>
   );
