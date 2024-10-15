@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
+import {Link as RouterLink} from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -94,6 +95,7 @@ export default function BlogView() {
 // Añadir PropTypes para validar las propiedades que se pasan a PostCard
 PostCard.propTypes = {
   post: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     cover: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
@@ -130,7 +132,9 @@ export function PostCard({ post }) {
         sx={imageStyles} 
       />
       <CardContent>
-        <Typography variant="h6">{post.title}</Typography>
+        <Typography variant="h6" component={RouterLink} to={`/admin/project/${post.id}`}>
+          {post.title}
+        </Typography>
         <Typography variant="body2" color="text.secondary">
           {post.description}
         </Typography>
