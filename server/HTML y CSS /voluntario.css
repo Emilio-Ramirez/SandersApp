@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+    font-size: 16px;
+}
+
+.volunteer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.volunteer-header {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 10px;
+}
+
+.volunteer-header h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.volunteer-header p {
+    font-size: 20px;
+}
+
+.volunteer-info {
+    padding: 40px 20px;
+}
+
+.volunteer-info h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #2c6e49;
+}
+
+.info-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.card {
+    flex: 1;
+    background-color: #e0f7e9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card h3 {
+    font-size: 22px;
+    color: #4CAF50;
+    margin-bottom: 15px;
+}
+
+.card p {
+    font-size: 16px;
+    color: #666;
+}
+
+.volunteer-form {
+    background-color: #f1f1f1;
+    padding: 30px 20px;
+    margin-top: 40px;
+    border-radius: 10px;
+}
+
+.volunteer-form h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #2c6e49;
+}
+
+.volunteer-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.volunteer-form label {
+    font-size: 18px;
+}
+
+.volunteer-form input, 
+.volunteer-form select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.volunteer-form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.volunteer-form button:hover {
+    background-color: #388e3c;
+}
+
+.volunteer-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #eeeeee;
+    margin-top: 30px;
+    border-radius: 0 0 10px 10px;
+}
+
+.volunteer-footer p {
+    font-size: 14px;
+    color: #555;
+}
