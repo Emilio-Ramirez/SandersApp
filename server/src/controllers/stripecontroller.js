@@ -2,6 +2,8 @@
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const { prisma } = require('../config/database');
+const { sendEmail } = require('../services/emailService');
+const donationConfirmationEmail = require('../templates/donationConfirmationEmail');
 
 exports.createStripeCustomer = async (userData) => {
   const { email, username, id } = userData;
@@ -49,7 +51,7 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { stripeCustomerId: true, email: true }
+      select: { stripeCustomerId: true, email: true, username: true }
     });
 
     if (!user || !user.stripeCustomerId) {
@@ -58,9 +60,8 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
 
     const project = await prisma.proyecto.findUnique({
       where: { id: projectId },
-      select: { id: true, stripeIdProducto: true }
+      select: { id: true, stripeIdProducto: true, nombre: true }
     });
-
 
     if (!project) {
       throw new Error(`Project with ID ${projectId} not found`);
@@ -69,6 +70,8 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
     if (!project.stripeIdProducto) {
       throw new Error(`Project with ID ${projectId} does not have a Stripe Product ID`);
     }
+
+    let donationResult;
 
     if (isMensual) {
       // Handle subscription
@@ -82,7 +85,7 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
       const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomerId,
         items: [{ price: price.id }],
-        default_payment_method: paymentMethodId, // Use the provided paymentMethodId
+        default_payment_method: paymentMethodId,
         payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
         metadata: {
@@ -90,16 +93,13 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         },
       });
 
-      // Confirm the payment intent associated with the subscription
       const paymentIntent = subscription.latest_invoice.payment_intent;
       if (paymentIntent.status === 'requires_confirmation') {
         await stripe.paymentIntents.confirm(paymentIntent.id);
       }
 
-      // Refresh the subscription to get the updated status
       const updatedSubscription = await stripe.subscriptions.retrieve(subscription.id);
 
-      // Save subscription details to your database
       await prisma.suscripcion.create({
         data: {
           usuario: { connect: { id: userId } },
@@ -108,7 +108,7 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
           estado: updatedSubscription.status,
           fecha_inicio: new Date(updatedSubscription.current_period_start * 1000),
           fecha_fin: new Date(updatedSubscription.current_period_end * 1000),
-          cantidad: amount / 100 // Convert cents to dollars/pesos
+          cantidad: amount / 100
         }
       });
 
@@ -116,21 +116,20 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         data: {
           usuario: { connect: { id: userId } },
           proyecto: { connect: { id: projectId } },
-          cantidad: amount / 100, // Convert cents to dollars/pesos
+          cantidad: amount / 100,
           fecha: new Date(),
-          stripe_id: updatedSubscription.id, // Use subscription ID instead of payment intent ID
+          stripe_id: updatedSubscription.id,
           es_mensual: true
         }
       });
 
-      return {
+      donationResult = {
         subscriptionId: updatedSubscription.id,
         clientSecret: paymentIntent.client_secret,
         status: updatedSubscription.status
       };
     } else {
       // Handle one-time donation
-      // Create a Price object for this specific donation amount
       const price = await stripe.prices.create({
         unit_amount: amount,
         currency: currency,
@@ -151,24 +150,39 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         },
       });
 
-      // Save donation details to your database
       await prisma.donacion.create({
         data: {
           usuario: { connect: { id: userId } },
           proyecto: { connect: { id: projectId } },
-          cantidad: amount / 100, // Convert cents to dollars/pesos
+          cantidad: amount / 100,
           fecha: new Date(),
           stripe_id: paymentIntent.id,
           es_mensual: false
         }
       });
 
-      return {
+      donationResult = {
         paymentIntentId: paymentIntent.id,
         clientSecret: paymentIntent.client_secret,
         status: paymentIntent.status
       };
     }
+
+    // Send confirmation email
+    try {
+      const emailHtml = donationConfirmationEmail(user.username, amount / 100);
+      await sendEmail(
+        user.email,
+        'Gracias por tu donación - Fundación Sanders',
+        'Gracias por tu donación a Fundación Sanders',
+        emailHtml
+      );
+    } catch (emailError) {
+      console.error('Error sending donation confirmation email:', emailError);
+      // We're not throwing an error here to ensure the donation process completes
+    }
+
+    return donationResult;
   } catch (error) {
     console.error('Error processing user donation:', error);
     throw new Error(`Failed to process user donation: ${error.message}`);
