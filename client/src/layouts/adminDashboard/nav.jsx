@@ -16,7 +16,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { account } from 'src/_mock/account';
 
-import Logo from 'src/components/logo';
+import Logo from 'src/components/logoAdmin';
 import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';

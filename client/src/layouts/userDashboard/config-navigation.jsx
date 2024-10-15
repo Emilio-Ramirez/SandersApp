@@ -29,7 +29,7 @@ const navConfig = [
   },
   {
     title: 'Proyectos',
-    path: '/blog',
+    path: '/user/projects',
     icon: icon('ic_blog'),
   },
 ];
