@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import {Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -16,11 +16,13 @@ import Iconify from 'src/components/iconify';
 import PostSort from '../post-sort';
 import api from '../../../utils/api';
 import PostSearch from '../post-search';
-
+import NewProjectPopup from '../NewProjectPopup';
 
 export default function BlogView() {
   const [projects, setProjects] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [openNewProjectPopup, setOpenNewProjectPopup] = useState(false);
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -36,11 +38,25 @@ export default function BlogView() {
     fetchProjects();
   }, []);
 
+  const handleNewProjectClick = () => {
+    setOpenNewProjectPopup(true);
+  };
+
+  const handleCloseNewProjectPopup = () => {
+    setOpenNewProjectPopup(false);
+  };
+
+
   return (
     <Container maxWidth="lg" sx={{ paddingBottom: 4 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Proyectos</Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
+        <Button
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+          onClick={handleNewProjectClick}
+        >
           Nuevo Proyecto
         </Button>
       </Stack>
@@ -88,6 +104,10 @@ export default function BlogView() {
           <Typography variant="body1">No se encontraron proyectos.</Typography>
         )}
       </Grid>
+      <NewProjectPopup
+        open={openNewProjectPopup}
+        onClose={handleCloseNewProjectPopup}
+      />
     </Container>
   );
 }
@@ -113,13 +133,13 @@ PostCard.propTypes = {
 const cardStyles = {
   display: 'flex',
   flexDirection: 'column',
-  height: '100%', 
+  height: '100%',
 };
 
 const imageStyles = {
   width: '100%',
   height: 'auto',
-  objectFit: 'cover', 
+  objectFit: 'cover',
 };
 
 export function PostCard({ post }) {
@@ -129,7 +149,7 @@ export function PostCard({ post }) {
         component="img"
         image={post.cover}
         alt={post.title}
-        sx={imageStyles} 
+        sx={imageStyles}
       />
       <CardContent>
         <Typography variant="h6" component={RouterLink} to={`/admin/project/${post.id}`}>
