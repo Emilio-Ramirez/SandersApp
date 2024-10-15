@@ -196,44 +196,44 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Función para cambiar el rol de un usuario
-exports.changeUserRole = async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const { role } = req.body;
+// // Función para cambiar el rol de un usuario
+// exports.changeUserRole = async (req, res) => {
+//   try {
+//     const userId = parseInt(req.params.id);
+//     const { role } = req.body;
 
-    // Validar el rol
-    if (!['user', 'admin'].includes(role)) {
-      return res.status(400).json({
-        status: 'error',
-        code: 'INVALID_ROLE',
-        message: 'Invalid role. Must be either "user" or "admin"'
-      });
-    }
+//     // Validar el rol
+//     if (!['user', 'admin'].includes(role)) {
+//       return res.status(400).json({
+//         status: 'error',
+//         code: 'INVALID_ROLE',
+//         message: 'Invalid role. Must be either "user" or "admin"'
+//       });
+//     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: { role },
-      select: { id: true, username: true, email: true, role: true }
-    });
+//     const updatedUser = await prisma.user.update({
+//       where: { id: userId },
+//       data: { role },
+//       select: { id: true, username: true, email: true, role: true }
+//     });
 
-    res.json({
-      status: 'success',
-      message: 'User role updated successfully',
-      user: updatedUser
-    });
-  } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({
-        status: 'error',
-        code: 'USER_NOT_FOUND',
-        message: 'User not found'
-      });
-    }
-    res.status(500).json({
-      status: 'error',
-      code: 'SERVER_ERROR',
-      message: 'An unexpected error occurred while updating the role.'
-    });
-  }
-};
+//     res.json({
+//       status: 'success',
+//       message: 'User role updated successfully',
+//       user: updatedUser
+//     });
+//   } catch (error) {
+//     if (error.code === 'P2025') {
+//       return res.status(404).json({
+//         status: 'error',
+//         code: 'USER_NOT_FOUND',
+//         message: 'User not found'
+//       });
+//     }
+//     res.status(500).json({
+//       status: 'error',
+//       code: 'SERVER_ERROR',
+//       message: 'An unexpected error occurred while updating the role.'
+//     });
+//   }
+// };

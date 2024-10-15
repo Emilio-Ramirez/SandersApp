@@ -11,7 +11,6 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -23,7 +22,7 @@ export default function UserTableRow({
   role,
   handleClick,
   email,
-  onDelete, // Recibir la función de eliminar por props
+  deleteUser, // Recibir la función de eliminar por props
 }) {
   const [open, setOpen] = useState(null);
 
@@ -36,7 +35,10 @@ export default function UserTableRow({
   };
 
   const handleDelete = () => {
-    onDelete(); // Llamar a la función de eliminación desde props
+    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este usuario?');
+    if (confirmed) {
+      deleteUser(); // Llamar a la función de eliminación que se pasó por props
+    }
     handleCloseMenu(); // Cerrar el menú después de eliminar
   };
 
@@ -98,5 +100,5 @@ UserTableRow.propTypes = {
   role: PropTypes.any,
   selected: PropTypes.any,
   email: PropTypes.string,
-  onDelete: PropTypes.func, // Definir el tipo de la nueva prop onDelete
+  deleteUser: PropTypes.func.isRequired, 
 };
