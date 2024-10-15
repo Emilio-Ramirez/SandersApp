@@ -1,17 +1,21 @@
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import CardMedia from '@mui/material/CardMedia';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 import Iconify from 'src/components/iconify';
 
 import PostSort from '../post-sort';
-import PostCard from '../post-card';
 import api from '../../../utils/api';
 import PostSearch from '../post-search';
+
 
 export default function BlogView() {
   const [projects, setProjects] = useState([]);
@@ -32,7 +36,7 @@ export default function BlogView() {
   }, []);
 
   return (
-    <Container>
+    <Container maxWidth="lg" sx={{ paddingBottom: 4 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Proyectos</Typography>
         <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
@@ -84,5 +88,53 @@ export default function BlogView() {
         )}
       </Grid>
     </Container>
+  );
+}
+
+// Añadir PropTypes para validar las propiedades que se pasan a PostCard
+PostCard.propTypes = {
+  post: PropTypes.shape({
+    cover: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    view: PropTypes.number,
+    comment: PropTypes.number,
+    share: PropTypes.number,
+    author: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      avatarUrl: PropTypes.string.isRequired,
+    }),
+    createdAt: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+const cardStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%', 
+};
+
+const imageStyles = {
+  width: '100%',
+  height: 'auto',
+  objectFit: 'cover', 
+};
+
+export function PostCard({ post }) {
+  return (
+    <Card sx={cardStyles}>
+      <CardMedia
+        component="img"
+        image={post.cover}
+        alt={post.title}
+        sx={imageStyles} 
+      />
+      <CardContent>
+        <Typography variant="h6">{post.title}</Typography>
+        <Typography variant="body2" color="text.secondary">
+          {post.description}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
