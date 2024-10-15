@@ -1,0 +1,86 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.email-container {
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    background-color: #0288d1;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.image-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.cover-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.email-body {
+    padding: 25px;
+    line-height: 1.6;
+    text-align: center; /* Centra el contenido del cuerpo */
+}
+
+.email-body h2 {
+    font-size: 22px;
+    color: #0288d1;
+    margin-bottom: 10px;
+}
+
+.email-body p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.email-body .btn {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #0288d1;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 18px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    width: auto; /* Asegura que el botón se ajuste al contenido */
+}
+
+.email-body .btn:hover {
+    background-color: #0277bd;
+}
+
+.email-footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    color: #888;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+}
