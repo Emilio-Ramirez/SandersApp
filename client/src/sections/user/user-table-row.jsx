@@ -35,13 +35,9 @@ export default function UserTableRow({
   };
 
   const handleDelete = () => {
-    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este usuario?');
-    if (confirmed) {
-      deleteUser(); // Llamar a la función de eliminación que se pasó por props
-    }
-    handleCloseMenu(); // Cerrar el menú después de eliminar
+    deleteUser(); // This will call the function passed from the parent
+    handleCloseMenu();
   };
-
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -100,5 +96,5 @@ UserTableRow.propTypes = {
   role: PropTypes.any,
   selected: PropTypes.any,
   email: PropTypes.string,
-  deleteUser: PropTypes.func.isRequired, 
+  deleteUser: PropTypes.func.isRequired,
 };
