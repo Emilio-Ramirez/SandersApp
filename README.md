@@ -52,6 +52,7 @@ erDiagram
         text descripcion
         int proveedorId FK
         decimal costo_total
+        decimal suma_recaudada
         date fecha_inicio
         date fecha_fin
         string link_ubicacion

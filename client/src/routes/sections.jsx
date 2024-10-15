@@ -1,8 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
+// import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import UserDashboardLayout from 'src/layouts/userDashboard';
 import AdminDashboardLayout from 'src/layouts/adminDashboard';
+
+import UserList from 'src/components/UserList'; // Importar el componente de usuarios
 
 import ProtectedRoute from '../components/ProtectedRoute';
 

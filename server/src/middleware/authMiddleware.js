@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     verifyToken(token);
-    req.userId = userId; // Attach userId to the request
+    req.userId = parseInt(userId); // Attach userId to the request
     next();
   } catch (error) {
     

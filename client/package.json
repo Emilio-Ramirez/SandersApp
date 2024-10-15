@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "start": "vite preview",
+    "dev:debug": "node --inspect-brk node_modules/.bin/vite",
     "build": "vite build",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",

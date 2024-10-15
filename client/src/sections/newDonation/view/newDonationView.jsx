@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+// src/sections/donacion/DonacionPage.jsx
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import React, { useState, useEffect } from 'react';
+import { Elements, useStripe } from '@stripe/react-stripe-js';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -15,23 +18,100 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
+import api from 'src/utils/api';
+
 import Iconify from 'src/components/iconify';
 
-export default function DonacionPage() {
+import SuccessCard from '../SuccessCard';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+function DonacionPageContent() {
   const navigate = useNavigate();
+  const stripe = useStripe();
   const [selectedCard, setSelectedCard] = useState('');
   const [selectedProject, setSelectedProject] = useState('');
   const [donationAmount, setDonationAmount] = useState('20.00');
+  const [isMensual, setIsMensual] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [cards, setCards] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
-  const cards = [
-    { id: '1', last4: '4242', brand: 'Visa' },
-    { id: '2', last4: '5555', brand: 'Mastercard' },
-  ];
+  useEffect(() => {
+    // Fetch projects
+    api.get('/api/proyectos')
+      .then(response => setProjects(response.data))
+      .catch((fetchError) => {
+        console.error('Error fetching projects:', fetchError);
+        setErrorMessage('Failed to load projects. Please try again.');
+      });
 
-  const projects = [
-    { id: '1', name: 'Agua para Chiapas' },
-    { id: '2', name: 'Pozos en Oaxaca' },
-  ];
+    // Fetch cards
+    api.get('/api/stripe/payment-methods')
+      .then(response => setCards(response.data))
+      .catch((fetchError) => {
+        console.error('Error fetching cards:', fetchError);
+        setErrorMessage('Failed to load payment methods. Please try again.');
+      });
+  }, []);
+
+  const handleDonation = async () => {
+    if (!stripe) {
+      setErrorMessage('Stripe has not been initialized.');
+      return;
+    }
+
+    try {
+      const return_url = `${window.location.origin}/donation-result`;
+      const response = await api.post('api/stripe/process-user-donation', {
+        projectId: parseInt(selectedProject, 10),
+        amount: Math.round(parseFloat(donationAmount) * 100), // Convert to cents
+        currency: 'mxn',
+        isMensual,
+        paymentMethodId: selectedCard,
+        return_url,
+      });
+
+      if (response.data.clientSecret) {
+        if (isMensual) {
+          // Handle subscription
+          const { error } = await stripe.confirmCardPayment(response.data.clientSecret);
+          if (error) {
+            throw new Error(error.message);
+          }
+        } else {
+          // Handle one-time payment
+          const { error, paymentIntent } = await stripe.confirmCardPayment(response.data.clientSecret);
+          if (error) {
+            throw new Error(error.message);
+          } else if (paymentIntent.status === 'requires_action') {
+            // Handle 3D Secure authentication
+            const { error: actionError } = await stripe.handleCardAction(response.data.clientSecret);
+            if (actionError) {
+              throw new Error(actionError.message);
+            }
+          }
+        }
+        setOpenSuccessDialog(true);
+      } else {
+        throw new Error('No client secret received from the server');
+      }
+    } catch (donationError) {
+      console.error('Error processing donation:', donationError);
+      if (donationError.response) {
+        console.error('Server response:', donationError.response.data);
+        setErrorMessage(`Error: ${donationError.response.data.error || 'Unknown server error'}`);
+      } else {
+        setErrorMessage('There was an error processing your donation. Please try again.');
+      }
+    }
+  };
+
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+    navigate('/user/donacion'); // or wherever you want to redirect after successful donation
+  };
 
   return (
     <Container maxWidth="lg">
@@ -44,24 +124,9 @@ export default function DonacionPage() {
         </Typography>
       </Box>
 
-      <Stack direction="row" alignItems="center" justifyContent="flex-end" mb={4}>
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon="ion:card" />}
-          onClick={() => navigate('/user/my-cards')}
-          sx={{
-            backgroundColor: '#FFA500',
-            '&:hover': { backgroundColor: '#FF8C00' },
-            color: 'white',
-          }}
-        >
-          Mis Tarjetas
-        </Button>
-      </Stack>
-
-      <Grid container spacing={4} alignItems="stretch">
+      <Grid container spacing={3}>
         <Grid item xs={12} md={5}>
-          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', p: 4 }}>
+          <Card sx={{ p: 3 }}>
             <Typography variant="h4" gutterBottom align="center">Monto de tu Donación</Typography>
             <TextField
               fullWidth
@@ -96,7 +161,7 @@ export default function DonacionPage() {
               >
                 <MenuItem value="" disabled>Elige un proyecto para apoyar</MenuItem>
                 {projects.map((project) => (
-                  <MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>
+                  <MenuItem key={project.id} value={project.id}>{project.nombre}</MenuItem>
                 ))}
               </Select>
 
@@ -110,13 +175,21 @@ export default function DonacionPage() {
                 <MenuItem value="" disabled>Selecciona una tarjeta</MenuItem>
                 {cards.map((card) => (
                   <MenuItem key={card.id} value={card.id}>
-                    {card.brand} terminada en {card.last4}
+                    {card.card.brand} terminada en {card.card.last4}
                   </MenuItem>
                 ))}
               </Select>
 
+              <Button
+                variant="outlined"
+                startIcon={<Iconify icon="mdi:credit-card-plus-outline" />}
+                onClick={() => navigate('/user/new-card')}
+              >
+                Agregar Nueva Tarjeta
+              </Button>
+
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox checked={isMensual} onChange={(e) => setIsMensual(e.target.checked)} />}
                 label={
                   <Typography variant="body2">
                     Hacer de esta una donación mensual
@@ -124,12 +197,16 @@ export default function DonacionPage() {
                 }
               />
 
+              {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+
               <Button
                 variant="contained"
                 fullWidth
                 color="primary"
                 size="large"
                 sx={{ mt: 2, py: 1.5 }}
+                onClick={handleDonation}
+                disabled={!selectedProject || !selectedCard}
               >
                 Donar ${donationAmount}
               </Button>
@@ -147,6 +224,15 @@ export default function DonacionPage() {
           </Card>
         </Grid>
       </Grid>
+      <SuccessCard open={openSuccessDialog} onClose={handleCloseSuccessDialog} />
     </Container>
+  );
+}
+
+export default function DonacionPage() {
+  return (
+    <Elements stripe={stripePromise}>
+      <DonacionPageContent />
+    </Elements>
   );
 }

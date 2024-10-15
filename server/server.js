@@ -9,13 +9,17 @@ const roleMiddleware = require('./src/middleware/roleMiddleware');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const donacionRoutes = require('./src/routes/donacionRoutes');
-const stripeRoutes = require('./src/routes/stripeRoutes');
 const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
-
+const stripeRoutes = require('./src/routes/stripeRoutes');
+const proyectoRoutes = require('./src/routes/proyectoRoutes');
+const fs = require('fs');
+const https = require('https');
 
 const app = express();
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 
 // Middleware
 app.use(cors());
@@ -26,8 +30,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/stripe', stripeRoutes);
 
 // Routes that require authentication and admin role
-app.use('/api/admin/users', authMiddleware, roleMiddleware(['admin']), userRoutes);
+app.use('/api/admin/users', userRoutes);
 app.use('/api/admin/donaciones', authMiddleware, roleMiddleware(['admin']), donacionRoutes);
+app.use('/api/proyectos', authMiddleware, roleMiddleware(['admin', 'user']), proyectoRoutes);
 
 app.get('/api/verify-stripe', async (req, res) => {
   try {
@@ -57,10 +62,17 @@ async function checkDatabaseConnection() {
 // Start the server
 const PORT = process.env.PORT || 4000;
 
+// Read Certificates
+const privateKey = fs.readFileSync('./certs/server.key', 'utf8');
+const certificate = fs.readFileSync('./certs/server.crt', 'utf8');
+const ca = fs.readFileSync('./certs/ca.crt', 'utf8');
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+const httpsServer = https.createServer(credentials, app);
+
 async function startServer() {
   const connected = await checkDatabaseConnection();
   if (connected) {
-    app.listen(PORT, () => {
+    httpsServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
   } else {

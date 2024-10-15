@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { donaciones } from 'src/_mock/donacion';
+import api from 'src/utils/api';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -28,11 +28,25 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 export default function DonacionPage() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('date');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [donaciones, setDonaciones] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDonaciones = async () => {
+      try {
+        const response = await api.get('/api/stripe/user-donations');
+        setDonaciones(response.data);
+      } catch (error) {
+        console.error('Error fetching donations:', error);
+        // Handle error (e.g., show an error message to the user)
+      }
+    };
+
+    fetchDonaciones();
+  }, []);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -40,33 +54,6 @@ export default function DonacionPage() {
       setOrder(isAsc ? 'desc' : 'asc');
       setOrderBy(id);
     }
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = donaciones.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -123,7 +110,6 @@ export default function DonacionPage() {
 
       <Card>
         <DonacionTableToolbar
-          numSelected={selected.length}
           filterName={filterName}
           onFilterName={handleFilterByName}
         />
@@ -134,17 +120,12 @@ export default function DonacionPage() {
               <DonacionTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={donaciones.length}
-                numSelected={selected.length}
                 onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'projectName', label: 'Project Name' },
+                  { id: 'amount', label: 'Amount' },
+                  { id: 'date', label: 'Date' },
+                  { id: 'isMonthly', label: 'Monthly' },
                 ]}
               />
               <TableBody>
@@ -153,14 +134,10 @@ export default function DonacionPage() {
                   .map((row) => (
                     <DonacionTableRow
                       key={row.id}
-                      name={row.name}
-                      role={row.role}
-                      status={row.status}
-                      company={row.company}
-                      avatarUrl={row.avatarUrl}
-                      isVerified={row.isVerified}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      projectName={row.projectName}
+                      amount={row.amount}
+                      date={row.date}
+                      isMonthly={row.isMonthly}
                     />
                   ))}
 
@@ -185,6 +162,6 @@ export default function DonacionPage() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
-    </Container >
+    </Container>
   );
 }
