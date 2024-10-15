@@ -1,3 +1,4 @@
+// Librerías y utilidades externas
 import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
@@ -10,9 +11,12 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import api from 'src/utils/api';  // Assuming you have an api utility
+// Utilidades internas
+import api from 'src/utils/api';
+
 import { useAuth } from 'src/contexts/AuthContext';
 
+// Componentes personalizados
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 

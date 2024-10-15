@@ -5,16 +5,10 @@ const {
   getDonacionById,
   createDonacion,
   updateDonacion,
-  deleteDonacion,
-  getDonacionesByProyecto
+  deleteDonacion
 } = require('../controllers/donacionFisicaController');
 
-router.get('/', getDonaciones);
+router.get('/', getDonaciones); // Main route for fetching donaciones físicas
 router.get('/:id', getDonacionById);
-router.post('/', createDonacion);
-router.put('/:id', updateDonacion);
-router.delete('/:id', deleteDonacion);
-router.get('/proyecto/:proyectoId', getDonacionesByProyecto);
 
 module.exports = router;
-

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // server/src/controllers/proyectoController.js
 const { prisma } = require('../config/database');
 

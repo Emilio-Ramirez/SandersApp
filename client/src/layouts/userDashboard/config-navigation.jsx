@@ -1,33 +1,34 @@
+// src/layouts/userDashboard/config-navigation-user.jsx
+
 import SvgColor from 'src/components/svg-color';
 
-// ----------------------------------------------------------------------
-
+// Helper function to render icons
 const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
 
-const navConfig = [
+// User navigation configuration
+const userNavConfig = [
   {
-    title: 'dashboard',
-    path: '/user',
+    title: 'Dashboard',
+    path: '/user/dashboard',
     icon: icon('ic_analytics'),
   },
   {
-    title: 'users',
-    path: '/user/',
-    icon: icon('ic_user'),
-  },
-  {
-    title: 'mis donaciones',
-    path: '/user/donacion',
-    icon: icon('ic_user'),
-  },
-
-  {
     title: 'Proyectos',
-    path: '/blog',
+    path: '/user/projects',
     icon: icon('ic_blog'),
+  },
+  {
+    title: 'Mis Donaciones',
+    path: '/user/donacion',
+    icon: icon('ic_cart'),
+  },
+  {
+    title: 'Mis Suscripciones',
+    path: '/user/suscripciones',
+    icon: icon('ic_user'),
   },
 ];
 
-export default navConfig;
+export default userNavConfig;
