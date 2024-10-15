@@ -15,11 +15,11 @@ export const LandingPage = lazy(() => import('src/pages/LandingPage'));
 // Admin Pages
 export const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
 export const AdminUserPage = lazy(() => import('src/pages/admin/user'));
-export const AdminProductsPage = lazy(() => import('src/pages/admin/products'));
 export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
 export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
 export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
 export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDescription'));
+export const AdminDonacionFisicaPage = lazy(() => import('src/pages/admin/donacionFisica')); // Donación Física Admin
 
 // User Pages
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
@@ -60,12 +60,11 @@ export default function Router() {
       children: [
         { element: <AdminDashboardPage />, index: true },
         { path: 'user', element: <AdminUserPage /> },
-        { path: 'products', element: <AdminProductsPage /> },
         { path: 'blog', element: <AdminBlogPage /> },
         { path: 'new-project', element: <AdminAddProjectPage /> },
         { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
         { path: 'donacion', element: <AdminDonacionPage /> },
-        { path: 'users', element: <UserList /> },
+        { path: 'donacion-fisica', element: <AdminDonacionFisicaPage /> }, // Add Donación Física Admin Route
       ],
     },
     {

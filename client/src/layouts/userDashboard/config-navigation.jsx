@@ -18,19 +18,19 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
-    title: 'mis donaciones',
+    title: 'Mis donaciones',
     path: '/user/donacion',
     icon: icon('ic_user'),
-  },
-  {
-    title: 'product',
-    path: '/products',
-    icon: icon('ic_cart'),
   },
   {
     title: 'Proyectos',
     path: '/blog',
     icon: icon('ic_blog'),
+  },
+  {
+    title: 'Donación Física',  // Nuevo elemento agregado
+    path: '/admin/donacionFisica',  // Ruta hacia el componente de Donación Física
+    icon: icon('ic_donation'), // Asegúrate de tener el ícono o usa uno temporal
   },
 ];
 
