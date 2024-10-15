@@ -1,6 +1,8 @@
 const { prisma } = require('../config/database');
 const bcrypt = require('bcrypt');
 const { createStripeCustomer, deleteStripeCustomer } = require('./stripeController');
+const { sendEmail } = require('../services/emailService');
+const welcomeEmailTemplate = require('../templates/welcomeEmail');
 
 // Obtener todos los usuarios
 exports.getUsers = async (req, res) => {
@@ -87,6 +89,16 @@ exports.createUser = async (req, res) => {
       data: { stripeCustomerId: stripeCustomer.id }
     });
 
+    // Send welcome email
+    try {
+      const emailHtml = welcomeEmailTemplate(username);
+      await sendEmail(email, 'Bienvenido a Fundación Sanders', 'Bienvenido a Fundación Sanders', emailHtml);
+    } catch (emailError) {
+      console.error('Error sending welcome email:', emailError);
+      // Consider whether you want to fail the user creation if the email fails
+      // For now, we'll just log the error and continue
+    }
+
     const userWithoutPassword = { ...updatedUser };
     delete userWithoutPassword.password;
 
@@ -119,6 +131,7 @@ exports.createUser = async (req, res) => {
       });
     }
 
+    console.error('Error creating user:', error);
     res.status(500).json({
       status: 'error',
       code: 'SERVER_ERROR',
