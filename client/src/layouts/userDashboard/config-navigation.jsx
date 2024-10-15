@@ -13,24 +13,19 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'mis suscripciones',
-    path: '/user/suscripciones',
-    icon: icon('ic_user'),
+    title: 'Proyectos',
+    path: '/user/projects',
+    icon: icon('ic_blog'),
   },
   {
     title: 'mis donaciones',
     path: '/user/donacion',
-    icon: icon('ic_user'),
-  },
-  {
-    title: 'product',
-    path: '/products',
     icon: icon('ic_cart'),
   },
   {
-    title: 'Proyectos',
-    path: '/user/projects',
-    icon: icon('ic_blog'),
+    title: 'mis suscripciones',
+    path: '/user/suscripciones',
+    icon: icon('ic_user'),
   },
 ];
 
