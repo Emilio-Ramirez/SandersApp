@@ -128,13 +128,14 @@ exports.createUser = async (req, res) => {
 };
 
 // Cambiar el rol de un usuario
-exports.changeUserRole = async (req, res) => {
+exports.onRoleChange = async (req, res) => {
+  console.log('Change user role request received:', req.body);  // Verificar que la solicitud llegue aquí
   try {
     const userId = parseInt(req.params.id);
     const { role } = req.body;
 
     // Validar el rol
-    if (!['user', 'admin'].includes(role)) {
+    if (!['user', 'admin'].includes(role.toLowerCase())) {
       return res.status(400).json({
         status: 'error',
         code: 'INVALID_ROLE',
@@ -164,10 +165,11 @@ exports.changeUserRole = async (req, res) => {
     res.status(500).json({
       status: 'error',
       code: 'SERVER_ERROR',
-      message: 'An unexpected error occurred while updating the user role'
+      message: 'An unexpected error occurred while updating the user role.'
     });
   }
 };
+
 
 // Actualizar un usuario
 exports.updateUser = async (req, res) => {

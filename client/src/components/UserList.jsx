@@ -80,8 +80,6 @@ function UserList() {
           ))}
         </tbody>
       </table>
-
-      {/* Modal para editar rol */}
       {selectedUser && (
         <EditRoleCard
           open={openEditRole}

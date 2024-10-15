@@ -20,6 +20,11 @@ const UserManagement = () => {
 
   // Enviar los datos del nuevo usuario al backend
   const submitNewUser = () => {
+    if (!newUser.username || !newUser.email || !newUser.password) {
+      alert('Please fill in all fields.');
+      return;
+    }
+    
     axios.post('/api/users', newUser)
       .then(response => {
         setUsers([...users, response.data]);
@@ -27,6 +32,19 @@ const UserManagement = () => {
         setNewUser({ username: '', email: '', password: '', role: 'USER' }); // Limpiar formulario
       })
       .catch(error => console.error('Error creating user:', error));
+  };
+
+  // Cambiar el rol del usuario
+  const onRoleChange = (userId, newRole) => {
+    axios.put(`/api/users/${userId}/role`, { role: newRole })
+      .then(response => {
+        setUsers(users.map(user => user.id === userId ? response.data.user : user));
+        alert('Role updated successfully');
+      })
+      .catch(error => {
+        alert('Failed to update role. Please try again.');
+        console.error('Error updating role:', error);
+      });
   };
 
   return (
@@ -69,11 +87,14 @@ const UserManagement = () => {
         </div>
       )}
 
-      {/* Lista de usuarios */}
+      {/* Lista de usuarios con botón para cambiar rol */}
       <ul>
         {users.map(user => (
           <li key={user.id}>
             {user.username} ({user.role}) - {user.email}
+            <button type="button" onClick={() => onRoleChange(user.id, user.role === 'ADMIN' ? 'USER' : 'ADMIN')}>
+              Change Role to {user.role === 'ADMIN' ? 'User' : 'Admin'}
+            </button>
           </li>
         ))}
       </ul>
