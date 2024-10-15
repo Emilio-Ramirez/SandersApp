@@ -2,9 +2,7 @@
 const { prisma } = require('../config/database');
 
 exports.getProyectos = async (req, res) => {
-  console.log('getProyectos function called');
   try {
-    console.log('Attempting to fetch projects from the database');
     const proyectos = await prisma.proyecto.findMany({
       include: {
         donaciones: true,
@@ -12,11 +10,8 @@ exports.getProyectos = async (req, res) => {
         estadisticas: true,
       }
     });
-    console.log('Projects fetched successfully:', proyectos.length);
-    console.log('First project:', proyectos[0]);
     res.json(proyectos);
   } catch (error) {
-    console.error('Error fetching projects:', error);
     res.status(500).json({
       status: 'error',
       message: 'Error fetching projects',
@@ -63,16 +58,19 @@ exports.createProyecto = async (req, res) => {
       estado_trazabilidad
     } = req.body;
 
+    const projectData = {
+      nombre,
+      descripcion,
+      costo_total: parseFloat(costo_total),
+      suma_recaudada: 0, // Initialize with 0 or any default value
+      fecha_inicio: new Date(fecha_inicio),
+      fecha_fin: new Date(fecha_fin),
+      link_ubicacion,
+      estado_trazabilidad: estado_trazabilidad ? JSON.parse(estado_trazabilidad) : {},
+    };
+
     const newProyecto = await prisma.proyecto.create({
-      data: {
-        nombre,
-        descripcion,
-        costo_total: parseFloat(costo_total),
-        fecha_inicio: new Date(fecha_inicio),
-        fecha_fin: new Date(fecha_fin),
-        link_ubicacion,
-        estado_trazabilidad: JSON.parse(estado_trazabilidad),
-      },
+      data: projectData,
     });
 
     res.status(201).json({
@@ -81,6 +79,7 @@ exports.createProyecto = async (req, res) => {
       proyecto: newProyecto
     });
   } catch (error) {
+    console.error('Error creating project:', error);
     res.status(500).json({
       status: 'error',
       message: 'Error creating project',
