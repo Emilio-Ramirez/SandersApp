@@ -13,6 +13,11 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
+    title: 'Proyectos',
+    path: '/admin/blog',
+    icon: icon('ic_blog'),
+  },
+  {
     title: 'users',
     path: '/admin/user',
     icon: icon('ic_user'),
@@ -20,13 +25,14 @@ const navConfig = [
   {
     title: 'donaciones',
     path: '/admin/donacion',
+    icon: icon('ic_cart'),
+  },
+    {
+    title: 'suscripciones',
+    path: '/admin/suscripciones',
     icon: icon('ic_user'),
   },
-  {
-    title: 'Proyectos',
-    path: '/admin/blog',
-    icon: icon('ic_blog'),
-  },
+
 ];
 
 export default navConfig;
