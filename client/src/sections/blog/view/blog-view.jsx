@@ -5,10 +5,11 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+
 import Iconify from 'src/components/iconify';
+
 import PostSort from '../post-sort';
 import PostCard from '../post-card';
-
 import api from '../../../utils/api';
 import PostSearch from '../post-search';
 
