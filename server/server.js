@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -51,7 +51,6 @@ app.use('/api/donaciones-fisicas', authMiddleware, donacionFisicaRoutes);
 async function checkDatabaseConnection() {
   try {
     await prisma.$connect();
-    console.log('Database connected successfully.');
     return true;
   } catch (error) {
     console.error('Database connection failed:', error);
@@ -73,7 +72,6 @@ async function startServer() {
   const connected = await checkDatabaseConnection();
   if (connected) {
     httpsServer.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
     });
   } else {
     console.error('Failed to start server due to database connection issues');

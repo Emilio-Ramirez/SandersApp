@@ -5,7 +5,7 @@ import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 import UserDashboardLayout from 'src/layouts/userDashboard';
 import AdminDashboardLayout from 'src/layouts/adminDashboard';
 
-import UserList from 'src/components/UserList'; // Importar el componente de usuarios
+import UserList from 'src/components/UserList'; // Importing the user list component
 
 import ProtectedRoute from '../components/ProtectedRoute';
 
@@ -15,11 +15,11 @@ export const LandingPage = lazy(() => import('src/pages/LandingPage'));
 // Admin Pages
 export const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
 export const AdminUserPage = lazy(() => import('src/pages/admin/user'));
-export const AdminProductsPage = lazy(() => import('src/pages/admin/products'));
 export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
 export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
 export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
 export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDescription'));
+export const AdminPhysicalDonationsPage = lazy(() => import('src/pages/admin/PhysicalDonations'));
 
 // User Pages
 export const UserDashboardPage = lazy(() => import('src/pages/user/dashboard'));
@@ -28,6 +28,9 @@ export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
 export const UserNewDonation = lazy(() => import('src/pages/user/newDonation'));
 export const UserMyCards = lazy(() => import('src/pages/user/MyCards'));
 export const UserNewCards = lazy(() => import('src/pages/user/newCard'));
+export const UserDonacionesFisicasPage = lazy(() => import('src/pages/DonacionesFisicas')
+);
+
 
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -60,11 +63,11 @@ export default function Router() {
       children: [
         { element: <AdminDashboardPage />, index: true },
         { path: 'user', element: <AdminUserPage /> },
-        { path: 'products', element: <AdminProductsPage /> },
         { path: 'blog', element: <AdminBlogPage /> },
         { path: 'new-project', element: <AdminAddProjectPage /> },
         { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
         { path: 'donacion', element: <AdminDonacionPage /> },
+        { path: 'physical-donations', element: <AdminPhysicalDonationsPage /> },
         { path: 'users', element: <UserList /> },
       ],
     },
@@ -85,7 +88,8 @@ export default function Router() {
         { path: 'donacion', element: <UserDonationPage /> },
         { path: 'new-donation', element: <UserNewDonation /> },
         { path: 'my-cards', element: <UserMyCards /> },
-        { path: 'new-card', element: <UserNewCards /> }
+        { path: 'new-card', element: <UserNewCards /> },
+        { path: 'donaciones-fisicas', element: <UserDonacionesFisicasPage /> },
       ],
     },
     {
@@ -109,7 +113,7 @@ export default function Router() {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <DonarPage />
-        </Suspense >
+        </Suspense>
       ),
     },
     {
@@ -133,5 +137,6 @@ export default function Router() {
       element: <Navigate to="/404" replace />,
     },
   ]);
+
   return routes;
 }
