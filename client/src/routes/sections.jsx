@@ -85,7 +85,8 @@ export default function Router() {
         { path: 'donacion', element: <UserDonationPage /> },
         { path: 'new-donation', element: <UserNewDonation /> },
         { path: 'my-cards', element: <UserMyCards /> },
-        { path: 'new-card', element: <UserNewCards /> }
+        { path: 'new-card', element: <UserNewCards /> },
+        { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
       ],
     },
     {

@@ -123,7 +123,7 @@ export function PostCard({ post }) {
         sx={imageStyles}
       />
       <CardContent>
-        <Typography variant="h6" component={RouterLink} to={`/admin/project/${post.id}`}>
+        <Typography variant="h6" component={RouterLink} to={`/user/project/${post.id}`}>
           {post.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
