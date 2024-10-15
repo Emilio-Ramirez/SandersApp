@@ -1,8 +1,13 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
+import EditRoleCard from '../sections/user/EditRoleCard'; 
+import UserTableRow from '../sections/user/user-table-row';
+
 function UserList() {
   const [users, setUsers] = useState([]);
+  const [openEditRole, setOpenEditRole] = useState(false); // Estado para manejar el modal de roles
+  const [selectedUser] = useState(null); // Usuario seleccionado para editar
 
   useEffect(() => {
     // Obtener la lista de usuarios desde el servidor
@@ -34,16 +39,23 @@ function UserList() {
   const updateRole = (userId, newRole) => {
     axios.put(`/api/users/${userId}/role`, { role: newRole })
       .then(response => {
-        // Actualizar el rol del usuario en el estado
+        // Actualizar el rol del usuario en el estado local
         setUsers(users.map(user => 
           user.id === userId ? { ...user, role: newRole } : user
         ));
-        console.log('Rol actualizado exitosamente');
+        console.log('Rol actualizado exitosamente en la base de datos');
       })
       .catch(error => {
-        console.error('Error updating role:', error);
+        console.error('Error actualizando el rol:', error);
       });
   };
+  
+
+  // // Función para abrir el modal de editar roles
+  // const handleEditRole = (user) => {
+  //   setSelectedUser(user); // Establecer el usuario seleccionado
+  //   setOpenEditRole(true); // Abrir el modal
+  // };
 
   return (
     <div>
@@ -59,28 +71,25 @@ function UserList() {
         </thead>
         <tbody>
           {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>
-              <select 
-              value={user.role} 
-              onChange={(e) => updateRole(user.id, e.target.value)}
-              >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-                </select>
-
-              </td>
-              <td>
-                <button type="button" onClick={() => deleteUser(user.id)}>
-                  Delete
-                </button>
-              </td>
-            </tr>
+            <UserTableRow
+              key={user.id}
+              user={user}
+              onDelete={() => deleteUser(user.id)}
+              onRoleChange={(newRole) => updateRole(user.id, newRole)}
+            />
           ))}
         </tbody>
       </table>
+
+      {/* Modal para editar rol */}
+      {selectedUser && (
+        <EditRoleCard
+          open={openEditRole}
+          onClose={() => setOpenEditRole(false)}
+          user={selectedUser}
+          onRoleChange={updateRole} // Pasar la función para cambiar el rol
+        />
+      )}
     </div>
   );
 }
