@@ -12,11 +12,11 @@ const navConfig = [
     path: '/user',
     icon: icon('ic_analytics'),
   },
-  {
-    title: 'users',
-    path: '/user/',
-    icon: icon('ic_user'),
-  },
+  // {
+  //   title: 'users',
+  //   path: '/user/',
+  //   icon: icon('ic_user'),
+  // },
   {
     title: 'mis donaciones',
     path: '/user/donacion',
