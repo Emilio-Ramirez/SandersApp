@@ -4,6 +4,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const { prisma } = require('../config/database');
 const { sendEmail } = require('../services/emailService');
 const donationConfirmationEmail = require('../templates/donationConfirmationEmail');
+const donationConfirmation2Email = require('../templates/donationConfirmationEmail');
+
 
 exports.createStripeCustomer = async (userData) => {
   const { email, username, id } = userData;
@@ -30,22 +32,37 @@ exports.deleteStripeCustomer = async (stripeCustomerId) => {
 };
 
 
-exports.processOneTimeDonation = async (amount, currency) => {
+exports.processOneTimeDonation = async (amount, currency, email, username) => {
   try {
     // Create the PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
       automatic_payment_methods: { enabled: true },
+      metadata: { email, username } // Store user info in metadata for later use
     });
+
+    // Attempt to send the confirmation email
+    try {
+      const emailHtml = donationConfirmation2Email(username, (amount / 100).toFixed(2));
+      await sendEmail(
+        email,
+        'Gracias por tu donación - Fundación Sanders',
+        'Gracias por tu donación a Fundación Sanders',
+        emailHtml
+      );
+    } catch (emailError) {
+      console.error('Error sending donation confirmation email:', emailError);
+      // We're not throwing an error here to ensure the donation process completes
+    }
 
     return {
       clientSecret: paymentIntent.client_secret
     };
   } catch (error) {
-    throw new Error(`Failed to create PaymentIntent: ${error.message}`);
+    throw new Error(`Failed to process donation: ${error.message}`);
   }
-};
+}
 
 exports.processUserDonation = async (userId, amount, currency, projectId, isMensual, paymentMethodId, return_url) => {
   try {
