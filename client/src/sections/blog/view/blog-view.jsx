@@ -23,7 +23,6 @@ export default function BlogView() {
   const [errorMessage, setErrorMessage] = useState('');
   const [openNewProjectPopup, setOpenNewProjectPopup] = useState(false);
 
-
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -49,7 +48,7 @@ export default function BlogView() {
   const handleDeleteProject = async (projectId) => {
     try {
       await api.delete(`/api/proyectos/${projectId}`);
-      setProjects(projects.filter(project => project.id !== projectId));
+      setProjects(projects.filter((project) => project.id !== projectId));
     } catch (error) {
       console.error('Error deleting project:', error);
       setErrorMessage('Failed to delete project. Please try again.');
@@ -57,7 +56,7 @@ export default function BlogView() {
   };
 
   const handleEditProject = (projectId) => {
-    // Navigate to edit page or open edit modal
+    // Navegar a la página de edición o abrir un modal de edición
     console.log('Edit project:', projectId);
   };
 
@@ -114,6 +113,7 @@ export default function BlogView() {
           <Typography variant="body1">No se encontraron proyectos.</Typography>
         )}
       </Grid>
+
       <NewProjectPopup
         open={openNewProjectPopup}
         onClose={handleCloseNewProjectPopup}
@@ -121,24 +121,6 @@ export default function BlogView() {
     </Container>
   );
 }
-
-// Añadir PropTypes para validar las propiedades que se pasan a PostCard
-PostCard.propTypes = {
-  post: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    cover: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    view: PropTypes.number,
-    comment: PropTypes.number,
-    share: PropTypes.number,
-    author: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      avatarUrl: PropTypes.string.isRequired,
-    }),
-    createdAt: PropTypes.string.isRequired,
-  }).isRequired,
-};
 
 const cardStyles = {
   display: 'flex',
@@ -152,7 +134,7 @@ const imageStyles = {
   objectFit: 'cover',
 };
 
-export function PostCard({ post }) {
+export function PostCard({ post, onDelete, onEdit }) {
   return (
     <Card sx={cardStyles}>
       <CardMedia
@@ -168,9 +150,37 @@ export function PostCard({ post }) {
         <Typography variant="body2" color="text.secondary">
           {post.description}
         </Typography>
+        {/* Botones de Editar y Eliminar */}
+        <Stack direction="row" spacing={2} mt={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => onEdit(post.id)}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => onDelete(post.id)}
+          >
+            Eliminar
+          </Button>
+        </Stack>
       </CardContent>
     </Card>
   );
 }
- 
 
+PostCard.propTypes = {
+  post: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    cover: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    view: PropTypes.number,
+    comment: PropTypes.number,
+  }).isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+};
