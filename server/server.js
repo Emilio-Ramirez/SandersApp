@@ -59,6 +59,9 @@ async function checkDatabaseConnection() {
   }
 }
 
+// Registrar las rutas
+app.use('/api', userRoutes);
+
 // Start the server
 const PORT = process.env.PORT || 4000;
 
@@ -97,5 +100,4 @@ process.on('SIGINT', async () => {
 
 module.exports = { app, prisma };
 
-// Registrar las rutas
-app.use('/api', userRoutes);
+
