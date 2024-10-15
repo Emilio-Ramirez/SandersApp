@@ -126,6 +126,7 @@ export default function SuscripcionesView() {
                   { id: 'cantidad', label: 'Amount' },
                   { id: 'fecha_inicio', label: 'Start Date' },
                   { id: 'fecha_fin', label: 'End Date' },
+                  { id: 'stripe_subscription_id', label: 'Stripe Subscription ID' },
                   { id: 'actions', label: 'Actions' },
                 ]}
               />
@@ -135,12 +136,13 @@ export default function SuscripcionesView() {
                   .map((row) => (
                     <SuscripcionesTableRow
                       key={row.id}
-                      id={row.stripe_subscription_id}
+                      id={row.id}
                       projectName={row.proyecto.nombre}
                       userName={row.usuario.username}
                       amount={row.cantidad}
                       startDate={row.fecha_inicio}
                       endDate={row.fecha_fin}
+                      stripe_subscription_id={row.stripe_subscription_id}
                       onOpenDialog={handleOpenDialog}
                     />
                   ))}
