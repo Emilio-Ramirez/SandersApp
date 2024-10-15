@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
+import Select from '@mui/material/Select';
 import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
@@ -11,7 +12,6 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-// import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -23,8 +23,10 @@ export default function UserTableRow({
   role,
   handleClick,
   email,
-  onDelete, // Recibir la función de eliminar por props
+  deleteUser, // Recibir la función de eliminar por props
+  onRoleChange, // Recibir la función para cambiar el rol
 }) {
+  const [newRole, setNewRole] = useState(role); // Estado local para manejar el cambio de rol
   const [open, setOpen] = useState(null);
 
   const handleOpenMenu = (event) => {
@@ -36,11 +38,17 @@ export default function UserTableRow({
   };
 
   const handleDelete = () => {
-    onDelete(); // Llamar a la función de eliminación desde props
-    handleCloseMenu(); // Cerrar el menú después de eliminar
+    deleteUser(); // This will call the function passed from the parent
+    handleCloseMenu();
   };
 
-  return (
+  const handleChangeRole = (event) => {
+    const selectedRole = event.target.value;
+    setNewRole(selectedRole); // Actualizar el estado local
+    onRoleChange(selectedRole); // Llamar a la función pasando el ID del usuario y el nuevo rol
+  };
+
+   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
@@ -58,7 +66,17 @@ export default function UserTableRow({
 
         <TableCell>{email}</TableCell>
 
-        <TableCell>{role}</TableCell>
+        {/* Select para cambiar el rol */}
+        <TableCell>
+          <Select
+            value={newRole}
+            onChange={handleChangeRole}
+            fullWidth
+          >
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="user">User</MenuItem>
+          </Select>
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -77,11 +95,6 @@ export default function UserTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
@@ -98,5 +111,6 @@ UserTableRow.propTypes = {
   role: PropTypes.any,
   selected: PropTypes.any,
   email: PropTypes.string,
-  onDelete: PropTypes.func, // Definir el tipo de la nueva prop onDelete
+  deleteUser: PropTypes.func.isRequired,
+  onRoleChange: PropTypes.func.isRequired,
 };
