@@ -20,7 +20,7 @@ import api from 'src/utils/api';
 import { bgGradient } from 'src/theme/css';
 import { useAuth } from 'src/contexts/AuthContext';
 
-import Logo from 'src/components/logo';
+import Logo from 'src/components/logoUser';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -142,7 +142,7 @@ export default function LoginView() {
           <Typography variant="body2" sx={{ mt: 2, mb: 5 }}>
             Don’t have an account?
             <Link
-              component={RouterLink} 
+              component={RouterLink}
               to="/register"
               variant="subtitle2"
               sx={{ ml: 0.5 }}>

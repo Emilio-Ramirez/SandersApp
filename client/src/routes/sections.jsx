@@ -15,7 +15,6 @@ export const LandingPage = lazy(() => import('src/pages/LandingPage'));
 // Admin Pages
 export const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
 export const AdminUserPage = lazy(() => import('src/pages/admin/user'));
-export const AdminProductsPage = lazy(() => import('src/pages/admin/products'));
 export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
 export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
 export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
@@ -28,6 +27,7 @@ export const UserDonationPage = lazy(() => import('src/pages/user/donacion'));
 export const UserNewDonation = lazy(() => import('src/pages/user/newDonation'));
 export const UserMyCards = lazy(() => import('src/pages/user/MyCards'));
 export const UserNewCards = lazy(() => import('src/pages/user/newCard'));
+export const UserMySuscripciones = lazy(() => import('src/pages/user/mySuscripciones'));
 
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -60,7 +60,6 @@ export default function Router() {
       children: [
         { element: <AdminDashboardPage />, index: true },
         { path: 'user', element: <AdminUserPage /> },
-        { path: 'products', element: <AdminProductsPage /> },
         { path: 'blog', element: <AdminBlogPage /> },
         { path: 'new-project', element: <AdminAddProjectPage /> },
         { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
@@ -83,9 +82,11 @@ export default function Router() {
         { element: <UserDashboardPage />, index: true },
         { path: 'projects', element: <UserProjectsPage /> },
         { path: 'donacion', element: <UserDonationPage /> },
+        { path: 'suscripciones', element: <UserMySuscripciones /> },
         { path: 'new-donation', element: <UserNewDonation /> },
         { path: 'my-cards', element: <UserMyCards /> },
-        { path: 'new-card', element: <UserNewCards /> }
+        { path: 'new-card', element: <UserNewCards /> },
+        { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
       ],
     },
     {

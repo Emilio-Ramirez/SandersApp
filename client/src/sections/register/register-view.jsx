@@ -19,7 +19,7 @@ import api from 'src/utils/api';
 
 import { bgGradient } from 'src/theme/css';
 
-import Logo from 'src/components/logo';
+import Logo from 'src/components/logoUser';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
