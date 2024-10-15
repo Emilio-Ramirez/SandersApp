@@ -2,7 +2,9 @@
 const { prisma } = require('../config/database');
 
 exports.getProyectos = async (req, res) => {
+  console.log('getProyectos function called');
   try {
+    console.log('Attempting to fetch projects from the database');
     const proyectos = await prisma.proyecto.findMany({
       include: {
         donaciones: true,
@@ -10,8 +12,11 @@ exports.getProyectos = async (req, res) => {
         estadisticas: true,
       }
     });
+    console.log('Projects fetched successfully:', proyectos.length);
+    console.log('First project:', proyectos[0]);
     res.json(proyectos);
   } catch (error) {
+    console.error('Error fetching projects:', error);
     res.status(500).json({
       status: 'error',
       message: 'Error fetching projects',
