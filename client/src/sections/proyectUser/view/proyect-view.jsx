@@ -1,24 +1,21 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import {Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import CardMedia from '@mui/material/CardMedia';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
-import Iconify from 'src/components/iconify';
-
 import PostSort from '../post-sort';
 import api from '../../../utils/api';
 import PostSearch from '../post-search';
 
 
-export default function BlogView() {
+export default function ProyectView() {
   const [projects, setProjects] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -38,12 +35,6 @@ export default function BlogView() {
 
   return (
     <Container maxWidth="lg" sx={{ paddingBottom: 4 }}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Proyectos</Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          Nuevo Proyecto
-        </Button>
-      </Stack>
 
       {errorMessage && (
         <Typography color="error" variant="body1">
@@ -113,13 +104,13 @@ PostCard.propTypes = {
 const cardStyles = {
   display: 'flex',
   flexDirection: 'column',
-  height: '100%', 
+  height: '100%',
 };
 
 const imageStyles = {
   width: '100%',
   height: 'auto',
-  objectFit: 'cover', 
+  objectFit: 'cover',
 };
 
 export function PostCard({ post }) {
@@ -129,10 +120,10 @@ export function PostCard({ post }) {
         component="img"
         image={post.cover}
         alt={post.title}
-        sx={imageStyles} 
+        sx={imageStyles}
       />
       <CardContent>
-        <Typography variant="h6" component={RouterLink} to={`/admin/project/${post.id}`}>
+        <Typography variant="h6" component={RouterLink} to={`/user/project/${post.id}`}>
           {post.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">

@@ -141,4 +141,18 @@ router.get('/user-donations', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+router.post('/subscriptions/cancel/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId; // This comes from your authMiddleware
+    const result = await stripeController.cancelSubscription(userId, id);
+    res.json(result);
+  } catch (error) {
+    console.error('Error cancelling subscription:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

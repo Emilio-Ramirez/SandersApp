@@ -12,25 +12,28 @@ const navConfig = [
     path: '/user',
     icon: icon('ic_analytics'),
   },
+<<<<<<< HEAD
   // {
   //   title: 'users',
   //   path: '/user/',
   //   icon: icon('ic_user'),
   // },
+=======
+  {
+    title: 'Proyectos',
+    path: '/user/projects',
+    icon: icon('ic_blog'),
+  },
+>>>>>>> main
   {
     title: 'mis donaciones',
     path: '/user/donacion',
-    icon: icon('ic_user'),
-  },
-  {
-    title: 'product',
-    path: '/products',
     icon: icon('ic_cart'),
   },
   {
-    title: 'Proyectos',
-    path: '/blog',
-    icon: icon('ic_blog'),
+    title: 'mis suscripciones',
+    path: '/user/suscripciones',
+    icon: icon('ic_user'),
   },
 ];
 

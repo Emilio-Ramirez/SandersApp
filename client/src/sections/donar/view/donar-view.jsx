@@ -21,7 +21,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import api from 'src/utils/api';
 
-import Logo from 'src/components/logo';
+import Logo from 'src/components/logoUser';
 import Iconify from 'src/components/iconify';
 
 import SuccessCard from '../SuccessCard';
