@@ -2,6 +2,10 @@
 const Stripe = require('stripe');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const { prisma } = require('../config/database');
+const { sendEmail } = require('../services/emailService');
+const donationConfirmationEmail = require('../templates/donationConfirmationEmail');
+const donationConfirmation2Email = require('../templates/donationConfirmationEmail');
+
 
 exports.createStripeCustomer = async (userData) => {
   const { email, username, id } = userData;
@@ -28,28 +32,43 @@ exports.deleteStripeCustomer = async (stripeCustomerId) => {
 };
 
 
-exports.processOneTimeDonation = async (amount, currency) => {
+exports.processOneTimeDonation = async (amount, currency, email, username) => {
   try {
     // Create the PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
       automatic_payment_methods: { enabled: true },
+      metadata: { email, username } // Store user info in metadata for later use
     });
+
+    // Attempt to send the confirmation email
+    try {
+      const emailHtml = donationConfirmation2Email(username, (amount / 100).toFixed(2));
+      await sendEmail(
+        email,
+        'Gracias por tu donación - Fundación Sanders',
+        'Gracias por tu donación a Fundación Sanders',
+        emailHtml
+      );
+    } catch (emailError) {
+      console.error('Error sending donation confirmation email:', emailError);
+      // We're not throwing an error here to ensure the donation process completes
+    }
 
     return {
       clientSecret: paymentIntent.client_secret
     };
   } catch (error) {
-    throw new Error(`Failed to create PaymentIntent: ${error.message}`);
+    throw new Error(`Failed to process donation: ${error.message}`);
   }
-};
+}
 
 exports.processUserDonation = async (userId, amount, currency, projectId, isMensual, paymentMethodId, return_url) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { stripeCustomerId: true, email: true }
+      select: { stripeCustomerId: true, email: true, username: true }
     });
 
     if (!user || !user.stripeCustomerId) {
@@ -58,9 +77,8 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
 
     const project = await prisma.proyecto.findUnique({
       where: { id: projectId },
-      select: { id: true, stripeIdProducto: true }
+      select: { id: true, stripeIdProducto: true, nombre: true }
     });
-
 
     if (!project) {
       throw new Error(`Project with ID ${projectId} not found`);
@@ -69,6 +87,8 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
     if (!project.stripeIdProducto) {
       throw new Error(`Project with ID ${projectId} does not have a Stripe Product ID`);
     }
+
+    let donationResult;
 
     if (isMensual) {
       // Handle subscription
@@ -82,7 +102,7 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
       const subscription = await stripe.subscriptions.create({
         customer: user.stripeCustomerId,
         items: [{ price: price.id }],
-        default_payment_method: paymentMethodId, // Use the provided paymentMethodId
+        default_payment_method: paymentMethodId,
         payment_behavior: 'default_incomplete',
         expand: ['latest_invoice.payment_intent'],
         metadata: {
@@ -90,16 +110,13 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         },
       });
 
-      // Confirm the payment intent associated with the subscription
       const paymentIntent = subscription.latest_invoice.payment_intent;
       if (paymentIntent.status === 'requires_confirmation') {
         await stripe.paymentIntents.confirm(paymentIntent.id);
       }
 
-      // Refresh the subscription to get the updated status
       const updatedSubscription = await stripe.subscriptions.retrieve(subscription.id);
 
-      // Save subscription details to your database
       await prisma.suscripcion.create({
         data: {
           usuario: { connect: { id: userId } },
@@ -108,7 +125,7 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
           estado: updatedSubscription.status,
           fecha_inicio: new Date(updatedSubscription.current_period_start * 1000),
           fecha_fin: new Date(updatedSubscription.current_period_end * 1000),
-          cantidad: amount / 100 // Convert cents to dollars/pesos
+          cantidad: amount / 100
         }
       });
 
@@ -116,21 +133,20 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         data: {
           usuario: { connect: { id: userId } },
           proyecto: { connect: { id: projectId } },
-          cantidad: amount / 100, // Convert cents to dollars/pesos
+          cantidad: amount / 100,
           fecha: new Date(),
-          stripe_id: updatedSubscription.id, // Use subscription ID instead of payment intent ID
+          stripe_id: updatedSubscription.id,
           es_mensual: true
         }
       });
 
-      return {
+      donationResult = {
         subscriptionId: updatedSubscription.id,
         clientSecret: paymentIntent.client_secret,
         status: updatedSubscription.status
       };
     } else {
       // Handle one-time donation
-      // Create a Price object for this specific donation amount
       const price = await stripe.prices.create({
         unit_amount: amount,
         currency: currency,
@@ -151,24 +167,39 @@ exports.processUserDonation = async (userId, amount, currency, projectId, isMens
         },
       });
 
-      // Save donation details to your database
       await prisma.donacion.create({
         data: {
           usuario: { connect: { id: userId } },
           proyecto: { connect: { id: projectId } },
-          cantidad: amount / 100, // Convert cents to dollars/pesos
+          cantidad: amount / 100,
           fecha: new Date(),
           stripe_id: paymentIntent.id,
           es_mensual: false
         }
       });
 
-      return {
+      donationResult = {
         paymentIntentId: paymentIntent.id,
         clientSecret: paymentIntent.client_secret,
         status: paymentIntent.status
       };
     }
+
+    // Send confirmation email
+    try {
+      const emailHtml = donationConfirmationEmail(user.username, amount / 100);
+      await sendEmail(
+        user.email,
+        'Gracias por tu donación - Fundación Sanders',
+        'Gracias por tu donación a Fundación Sanders',
+        emailHtml
+      );
+    } catch (emailError) {
+      console.error('Error sending donation confirmation email:', emailError);
+      // We're not throwing an error here to ensure the donation process completes
+    }
+
+    return donationResult;
   } catch (error) {
     console.error('Error processing user donation:', error);
     throw new Error(`Failed to process user donation: ${error.message}`);
@@ -413,5 +444,39 @@ exports.getUserDonations = async (userId) => {
   } catch (error) {
     console.error('Error fetching user donations:', error);
     throw new Error(`Failed to fetch user donations: ${error.message}`);
+  }
+};
+
+
+exports.cancelSubscription = async (userId, subscriptionId) => {
+  try {
+    // First, verify that the subscription belongs to the user
+    const subscription = await prisma.suscripcion.findFirst({
+      where: {
+        id: parseInt(subscriptionId),
+        usuarioId: userId
+      }
+    });
+
+    if (!subscription) {
+      throw new Error('Subscription not found or does not belong to the user');
+    }
+
+    // Cancel the subscription in Stripe
+    const cancelledSubscription = await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
+
+    // Update the subscription status in your database
+    await prisma.suscripcion.update({
+      where: { id: parseInt(subscriptionId) },
+      data: {
+        estado: cancelledSubscription.status,
+        fecha_fin: new Date(cancelledSubscription.canceled_at * 1000)
+      }
+    });
+
+    return { message: 'Subscription cancelled successfully', status: cancelledSubscription.status };
+  } catch (error) {
+    console.error('Error cancelling subscription:', error);
+    throw new Error(`Failed to cancel subscription: ${error.message}`);
   }
 };

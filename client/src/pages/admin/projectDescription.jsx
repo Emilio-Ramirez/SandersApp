@@ -1,18 +1,15 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+// src/pages/admin/projectDescription.jsx
+import { Helmet } from 'react-helmet-async';
 
-const ProjectDescription = () => {
-  const { id } = useParams();
+import { ProyectoView } from 'src/sections/proyectoDescripcion/view';
 
-  // Aquí puedes hacer una llamada a una API para obtener los detalles del proyecto usando el ID
-
+export default function ProyectoPage() {
   return (
-    <div>
-      <h2>Project Description</h2>
-      <p>Detalles del proyecto con ID: {id}</p>
-      {/* Aquí se mostrarán los detalles del proyecto */}
-    </div>
+    <>
+      <Helmet>
+        <title> Proyecto </title>
+      </Helmet>
+      <ProyectoView />
+    </>
   );
-};
-
-export default ProjectDescription;
+}

@@ -10,15 +10,37 @@ const icon = (name) => (
 // Admin Navigation Configuration
 const navConfig = [
   {
+<<<<<<< HEAD
     title: 'Dashboard',
     path: '/admin/dashboard',  // ACTUALIZADO: Ruta al Dashboard
     icon: icon('ic_analytics'), // Icono para el Dashboard
+=======
+    title: 'dashboard',
+    path: '/admin',
+    icon: icon('ic_analytics'),
   },
   {
     title: 'Proyectos',
     path: '/admin/blog',
     icon: icon('ic_blog'),
   },
+  {
+    title: 'users',
+    path: '/admin/user',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'donaciones',
+    path: '/admin/donacion',
+    icon: icon('ic_cart'),
+>>>>>>> main
+  },
+    {
+    title: 'suscripciones',
+    path: '/admin/suscripciones',
+    icon: icon('ic_user'),
+  },
+<<<<<<< HEAD
   {
     title: 'Usuarios',
     path: '/admin/user',
@@ -39,6 +61,9 @@ const navConfig = [
     path: '/admin/suscripciones',
     icon: icon('ic_user'),
   },
+=======
+
+>>>>>>> main
 ];
 
 export default navConfig;

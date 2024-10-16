@@ -11,6 +11,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 export const LandingPage = lazy(() => import('src/pages/LandingPage'));
 
 // Admin Pages
+<<<<<<< HEAD
 const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
 const AdminUserPage = lazy(() => import('src/pages/admin/user'));
 const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
@@ -20,6 +21,15 @@ const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDe
 const AdminPhysicalDonationsPage = lazy(() => import('src/pages/admin/DonationPage'));
 
 // For Donaciones Físicas
+=======
+export const AdminDashboardPage = lazy(() => import('src/pages/admin/dashboard'));
+export const AdminUserPage = lazy(() => import('src/pages/admin/user'));
+export const AdminBlogPage = lazy(() => import('src/pages/admin/blog'));
+export const AdminDonacionPage = lazy(() => import('src/pages/admin/donacion'));
+export const AdminAddProjectPage = lazy(() => import('src/pages/admin/addProject'));
+export const AdminProjectDescriptionPage = lazy(() => import('src/pages/admin/projectDescription'));
+export const AdminSuscripciones = lazy(() => import('src/pages/admin/Suscripciones'));
+>>>>>>> main
 
 // User Pages
 export const UserDashboardPage = lazy(() =>
@@ -32,9 +42,13 @@ export const UserNewDonation = lazy(() =>
 );
 export const UserMyCards = lazy(() => import('src/pages/user/MyCards'));
 export const UserNewCards = lazy(() => import('src/pages/user/newCard'));
+<<<<<<< HEAD
 export const UserDonacionesFisicasPage = lazy(() =>
   import('src/sections/donacion/view/donacion-fisicas-view')
 ); // For Donaciones Físicas (User)
+=======
+export const UserMySuscripciones = lazy(() => import('src/pages/user/mySuscripciones'));
+>>>>>>> main
 
 // Common Pages
 export const LoginPage = lazy(() => import('src/pages/login'));
@@ -75,6 +89,7 @@ export default function Router() {
         { path: 'donacion', element: <AdminDonacionPage /> }, // Donaciones route
         { path: 'physical-donations', element: <AdminPhysicalDonationsPage /> }, // Donaciones Físicas route
         { path: 'users', element: <UserList /> },
+        { path: 'suscripciones', element: <AdminSuscripciones /> },
       ],
     },
     {
@@ -92,10 +107,15 @@ export default function Router() {
         { path: 'dashboard', element: <UserDashboardPage /> }, // User Dashboard
         { path: 'projects', element: <UserProjectsPage /> },
         { path: 'donacion', element: <UserDonationPage /> },
+        { path: 'suscripciones', element: <UserMySuscripciones /> },
         { path: 'new-donation', element: <UserNewDonation /> },
         { path: 'my-cards', element: <UserMyCards /> },
         { path: 'new-card', element: <UserNewCards /> },
+<<<<<<< HEAD
         { path: 'donaciones-fisicas', element: <UserDonacionesFisicasPage /> }, // Donaciones Físicas (User)
+=======
+        { path: 'project/:id', element: <AdminProjectDescriptionPage /> },
+>>>>>>> main
       ],
     },
     {

@@ -66,6 +66,19 @@ export default function UserPage() {
     }
   };
 
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        await api.delete(`/api/users/${userId}`);
+        // After successful deletion, refresh the user list
+        fetchUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        // Handle error (e.g., show an error message to the user)
+      }
+    }
+  };
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = users.map((n) => n.name);
@@ -160,6 +173,7 @@ export default function UserPage() {
                       avatarUrl={row.avatarUrl || defaultAvatar}
                       // isVerified={row.isVerified || false}
                       selected={selected.indexOf(row.name) !== -1}
+                      deleteUser={() => handleDeleteUser(row.id)}  // Add this line
                       handleClick={(event) => handleClick(event, row.name)}
                     />
                   ))}

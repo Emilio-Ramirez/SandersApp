@@ -25,7 +25,11 @@ const userNavConfig = [
     icon: icon('ic_cart'),
   },
   {
+<<<<<<< HEAD
     title: 'Mis Suscripciones',
+=======
+    title: 'mis suscripciones',
+>>>>>>> main
     path: '/user/suscripciones',
     icon: icon('ic_user'),
   },

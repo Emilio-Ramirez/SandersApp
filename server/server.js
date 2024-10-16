@@ -18,7 +18,13 @@ const donacionRoutes = require('./src/routes/donacionRoutes');
 const donacionFisicaRoutes = require('./src/routes/donacionFisicaRoutes');
 const stripeRoutes = require('./src/routes/stripeRoutes');
 const proyectoRoutes = require('./src/routes/proyectoRoutes');
+<<<<<<< HEAD
 const dashboardRoutes = require('./src/routes/dashboardRoutes'); // NUEVA RUTA
+=======
+const suscripcionesRoutes = require('./src/routes/suscripcionRoutes');
+const fs = require('fs');
+const https = require('https');
+>>>>>>> main
 
 const app = express();
 const prisma = new PrismaClient();
@@ -31,6 +37,7 @@ app.use(express.json());
 // Rutas sin autenticación
 app.use('/api/auth', authRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/suscripciones', suscripcionesRoutes);
 
 // Rutas con autenticación y control de roles
 app.use('/api/admin/users', userRoutes);
@@ -79,7 +86,14 @@ async function checkDatabaseConnection() {
   }
 }
 
+<<<<<<< HEAD
 // Configuración del servidor HTTPS
+=======
+// Registrar las rutas
+app.use('/api', userRoutes);
+
+// Start the server
+>>>>>>> main
 const PORT = process.env.PORT || 4000;
 const privateKey = fs.readFileSync('./certs/server.key', 'utf8');
 const certificate = fs.readFileSync('./certs/server.crt', 'utf8');
@@ -116,5 +130,9 @@ process.on('SIGINT', async () => {
 
 module.exports = { app, prisma };
 
+<<<<<<< HEAD
 // Registro de rutas adicionales
 app.use('/api', userRoutes);
+=======
+
+>>>>>>> main
