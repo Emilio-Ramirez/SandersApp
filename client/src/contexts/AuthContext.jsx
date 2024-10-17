@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loginAndRedirect,
     loading,
-    isAdmin: user?.role === 'admin', // Add this line
+    isAdmin: user?.role === 'admin',
   }), [user, login, loginAndRedirect, logout, loading]);
 
   return (
